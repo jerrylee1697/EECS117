@@ -23,12 +23,12 @@ mySort (int N, keytype* A)
     #pragma omp parallel
     #pragma omp single
 //   #pragma omp single nowait
-    mergeSort(A, 0, N-1);
+    mergeSort(A, 0, N-1, N);
 }
 
  
-void mergeSort (keytype* A, int l, int r) {
-    if (r-l < 10000) {
+void mergeSort (keytype* A, int l, int r, int N) {
+    if (r-l < N/8) {
         quickSort(r-l+1, (A + l));
         return;
     }
@@ -36,8 +36,8 @@ void mergeSort (keytype* A, int l, int r) {
         int m = (l + r) / 2;
         #pragma omp task
         #pragma imp task shared(A)
-        mergeSort(A, l, m);
-        mergeSort(A, m+1, r);
+        mergeSort(A, l, m, N);
+        mergeSort(A, m+1, r, N);
         #pragma omp taskwait
         merge(A, l, m, r);
     }
