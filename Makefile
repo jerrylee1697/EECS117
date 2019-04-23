@@ -1,7 +1,7 @@
 CC = g++
-CFLAGS = -fopenmp
-COPTFLAGS = -O3 -g
-LDFLAGS =
+CFLAGS =
+COPTFLAGS = -O3 -g -fopenmp
+LDFLAGS = 
 
 default:
 	@echo "=================================================="

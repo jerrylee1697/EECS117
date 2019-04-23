@@ -16,6 +16,7 @@ mySort (int N, keytype* A)
 {
   /* Lucky you, you get to start from scratch */
   #pragma omp parallel
+  #pragma omp single
 //   #pragma omp single nowait
   mergeSort(A, 0, N-1);
 }
@@ -26,6 +27,7 @@ void mergeSort (keytype* A, int l, int r) {
     if (l < r) {
         int m = (l + r) / 2;
         #pragma omp task
+        #pragma imp task shared(A)
         mergeSort(A, l, m);
         mergeSort(A, m+1, r);
         #pragma omp taskwait
