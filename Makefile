@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS =
+CFLAGS = -fopenmp
 COPTFLAGS = -O3 -g
 LDFLAGS =
 
