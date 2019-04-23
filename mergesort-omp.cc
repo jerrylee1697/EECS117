@@ -148,7 +148,7 @@ void merge(keytype* A, int l, int m, int r) {
 
 int binarySearch(int x, keytype *A, int p, int r) {
     int l = p;
-    int h = max(p, r+1);
+    int h = max(p, r + 1);
     while (l < h) {
         int mid = (l + h) / 2;
         if (x <= A[mid]) {
