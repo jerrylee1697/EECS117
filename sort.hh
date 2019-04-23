@@ -46,6 +46,13 @@ void mergeSort (keytype* A, int l, int r, int N);
 void mergeSort_Serial (keytype* A, int l, int r);
 
 void merge(keytype* A, int l, int m, int r);
+
+void pmergeSort(keytype* A, int p, int r, keytype* B, int s);
+
+void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3);
+
+int binarySearch(int x, keytype *A, int p, int r);
+
 #endif
 
 /* eof */
