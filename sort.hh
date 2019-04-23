@@ -43,6 +43,8 @@ void assertIsEqual (int N, const keytype* A, const keytype* B);
 
 void mergeSort (keytype* A, int l, int r);
 
+void mergeSort_Serial (keytype* A, int l, int r);
+
 void merge(keytype* A, int l, int m, int r);
 #endif
 

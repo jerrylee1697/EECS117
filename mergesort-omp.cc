@@ -15,15 +15,23 @@ void
 mySort (int N, keytype* A)
 {
   /* Lucky you, you get to start from scratch */
-  #pragma omp parallel
-  #pragma omp single
+    if (N <= 10000) {
+        quickSort(N, A);
+        return;
+    }
+
+    #pragma omp parallel
+    #pragma omp single
 //   #pragma omp single nowait
-  mergeSort(A, 0, N-1);
+    mergeSort(A, 0, N-1);
 }
 
  
 void mergeSort (keytype* A, int l, int r) {
-    
+    if (r-l < 10000) {
+        quickSort(r-l+1, (A + l));
+        return;
+    }
     if (l < r) {
         int m = (l + r) / 2;
         #pragma omp task
@@ -31,6 +39,16 @@ void mergeSort (keytype* A, int l, int r) {
         mergeSort(A, l, m);
         mergeSort(A, m+1, r);
         #pragma omp taskwait
+        merge(A, l, m, r);
+    }
+}
+
+void mergeSort_Serial (keytype* A, int l, int r) {
+    
+    if (l < r) {
+        int m = (l + r) / 2;
+        mergeSort_Serial(A, l, m);
+        mergeSort_Serial(A, m+1, r);
         merge(A, l, m, r);
     }
 }
