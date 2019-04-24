@@ -35,10 +35,10 @@ mySort (int N, keytype* A)
 
  
 void mergeSort (keytype* A, int l, int r, int N) {
-    if (r-l < N/8) {
+    /*if (r-l < N/8) {
         quickSort(r-l+1, (A + l));
         return;
-    }
+    }*/
     if (l < r) {
         int m = (l + r) / 2;
         #pragma omp task
@@ -49,6 +49,20 @@ void mergeSort (keytype* A, int l, int r, int N) {
         merge(A, l, m, r);
     }
 }
+
+
+void pmerge(keytype* B, int l_b, int r_b, int N_b, keytype* C, int l_c, int r_c, int N_c, keytype* result) {
+    keytype v = B[N_b/2];
+    keytype k = binarySearch(v, C, l_c, r_c);
+    keytype* C1 = C;
+    keytype* C2 = C + k + 1;
+    keytype* d1 = (keytype *)malloc ((r_b - l_b + 1) * sizeof (keytype));
+    keytype* d2 = (keytype *)malloc ((r_c - l_c + 1) * sizeof (keytype));
+    pmerge(B + l_b, 0, r_b - N_b/2, N_b/2, C + l_c, 0, r_c - N_c/2, N_c/2, d1);
+    pmerge(B + r_b - N_b/2 + 1, 0,  C2, N_c);
+    // (keytype *)malloc (N * sizeof (keytype));
+}
+
 
 void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
     int n = r - p + 1;
@@ -85,9 +99,6 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
         swap(p1, p2);
         swap(r1, r2);
         swap(n1, n2);
-        // p1 = p2;
-        // r1 = r2;
-        // n1 = n2;
     }
     if (n1 == 0) 
         return;
