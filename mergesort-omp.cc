@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <iostream>
 
 #include "sort.hh"
 #include <omp.h>
@@ -26,15 +27,35 @@ mySort (int N, keytype* A)
     
 //   #pragma omp single nowait
     // mergeSort(A, 0, N-1, N);
+    // for (int i = 0; i < N; ++i ) {
+    //     cout << A[i] << ' ';
+    // }
+    // cout << endl << "After: \n";
     keytype* B = newKeys (N);
     #pragma omp parallel
     #pragma omp single
     pmergeSort(A, 0, N-1, B, 0);
-    A = B;
+    // mergeSort(A, 0, N-1, N, B);
+    // A = B;
+
+    for (int i = 0; i < N; ++i ) {
+        A[i] = B[i];
+        // cout << A[i] << ' ';
+    }
+    // free(B);
+
+
+    // } cout << endl;
+    // cout << "Regular Merge " << endl;
+    // mergeSort(A, 0, N-1, N, B);
+    // A = B;
+    // for (int i = 0; i < N; ++i ) {
+    //     cout << A[i] << ' ';
+    // } cout << endl;
 }
 
  
-void mergeSort (keytype* A, int l, int r, int N) {
+void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
     /*if (r-l < N/8) {
         quickSort(r-l+1, (A + l));
         return;
@@ -43,25 +64,27 @@ void mergeSort (keytype* A, int l, int r, int N) {
         int m = (l + r) / 2;
         #pragma omp task
         #pragma omp task shared(A)
-        mergeSort(A, l, m, N);
-        mergeSort(A, m+1, r, N);
+        mergeSort(A, l, m, N, B);
+        mergeSort(A, m+1, r, N, B);
         #pragma omp taskwait
         merge(A, l, m, r);
+
+        // pmerge(A, l, m, m+1, r, B, l);
     }
 }
 
 
-void pmerge(keytype* B, int l_b, int r_b, int N_b, keytype* C, int l_c, int r_c, int N_c, keytype* result) {
-    keytype v = B[N_b/2];
-    keytype k = binarySearch(v, C, l_c, r_c);
-    keytype* C1 = C;
-    keytype* C2 = C + k + 1;
-    keytype* d1 = (keytype *)malloc ((r_b - l_b + 1) * sizeof (keytype));
-    keytype* d2 = (keytype *)malloc ((r_c - l_c + 1) * sizeof (keytype));
-    pmerge(B + l_b, 0, r_b - N_b/2, N_b/2, C + l_c, 0, r_c - N_c/2, N_c/2, d1);
-    pmerge(B + r_b - N_b/2 + 1, 0,  C2, N_c);
-    // (keytype *)malloc (N * sizeof (keytype));
-}
+// void pmerge(keytype* B, int l_b, int r_b, int N_b, keytype* C, int l_c, int r_c, int N_c, keytype* result) {
+//     keytype v = B[N_b/2];
+//     keytype k = binarySearch(v, C, l_c, r_c);
+//     keytype* C1 = C;
+//     keytype* C2 = C + k + 1;
+//     keytype* d1 = (keytype *)malloc ((r_b - l_b + 1) * sizeof (keytype));
+//     keytype* d2 = (keytype *)malloc ((r_c - l_c + 1) * sizeof (keytype));
+//     pmerge(B + l_b, 0, r_b - N_b/2, N_b/2, C + l_c, 0, r_c - N_c/2, N_c/2, d1);
+//     pmerge(B + r_b - N_b/2 + 1, 0,  C2, N_c);
+//     // (keytype *)malloc (N * sizeof (keytype));
+// }
 
 
 void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
@@ -78,6 +101,7 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         pmergeSort(A, q + 1, r, T, q_1 + 1);
         #pragma omp taskwait
         pmerge(T, 1, q_1, q_1 + 1, n, B, s);
+        // free(T);
     }
 }
 
@@ -104,7 +128,7 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
         return;
     else {
         int q1 = (p1 + r1) / 2;
-        int q2 = binarySearch(A[q1], A, p2, r2);
+        int q2 = binarySearch(T[q1], T, p2, r2);
         int q3 = p3 + (q1 - p1) + (q2 - p2);
         A[q3] = T[q1];
         #pragma omp task
