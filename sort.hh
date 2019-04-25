@@ -51,6 +51,8 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s);
 
 void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3);
 
+void merge_p(keytype* A_start, keytype* A_end, keytype* B_start, keytype* B_end, keytype* R);
+
 int binarySearch(int x, keytype *A, int p, int r);
 
 #endif

@@ -61,6 +61,17 @@ main (int argc, char* argv[])
 	  t_qs, 1e-6 * N / t_qs);
   assertIsSorted (N, A_qs);
 
+
+  /* Sort, Sequential Mergesort. */
+  keytype* A_s = newCopy (N, A_in);
+  stopwatch_start (timer);
+  mergeSort(A_s, 0, N-1, N, A_s);
+  long double t_s = stopwatch_stop (timer);
+  printf ("Sequential Merge sort: %Lg seconds ==> %Lg million keys per second\n",
+	  t_s, 1e-6 * N / t_s);
+  assertIsSorted (N, A_s);
+  assertIsEqual (N, A_s, A_qs);
+
   /* Sort, calling YOUR routine. */
   keytype* A_ms = newCopy (N, A_in);
   stopwatch_start (timer);

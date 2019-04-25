@@ -58,32 +58,7 @@ mySort (int N, keytype* A)
     // cout << endl;
 }
 
- 
-void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
-    /*if (r-l < N/8) {
-        quickSort(r-l+1, (A + l));
-        return;
-    }*/
-    if (l < r) {
-        int m = (l + r) / 2;
-        mergeSort(A, l, m, N, B);
-        mergeSort(A, m+1, r, N, B);
-        merge(A, l, m, r);
-    }
-}
 
-
-// void pmerge(keytype* B, int l_b, int r_b, int N_b, keytype* C, int l_c, int r_c, int N_c, keytype* result) {
-//     keytype v = B[N_b/2];
-//     keytype k = binarySearch(v, C, l_c, r_c);
-//     keytype* C1 = C;
-//     keytype* C2 = C + k + 1;
-//     keytype* d1 = (keytype *)malloc ((r_b - l_b + 1) * sizeof (keytype));
-//     keytype* d2 = (keytype *)malloc ((r_c - l_c + 1) * sizeof (keytype));
-//     pmerge(B + l_b, 0, r_b - N_b/2, N_b/2, C + l_c, 0, r_c - N_c/2, N_c/2, d1);
-//     pmerge(B + r_b - N_b/2 + 1, 0,  C2, N_c);
-//     // (keytype *)malloc (N * sizeof (keytype));
-// }
 
 
 void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
@@ -105,15 +80,6 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
     }
 }
 
-void mergeSort_Serial (keytype* A, int l, int r) {
-    
-    if (l < r) {
-        int m = (l + r) / 2;
-        mergeSort_Serial(A, l, m);
-        mergeSort_Serial(A, m+1, r);
-        merge(A, l, m, r);
-    }
-}
 
 void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
     int n1 = r1 - p1 + 1;
@@ -126,6 +92,9 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
     }
     if (n1 == 0) 
         return;
+    if (n1 + n2 <= 8192) {
+        merge_p(&T[p1], &T[p1 + n1], &T[p2], &T[p2 + n2], &A[p3]);
+    }
     else {
         int q1 = (p1 + r1) / 2;
         int q2 = binarySearch(T[q1], T, p2, r2);
@@ -137,6 +106,48 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
         #pragma omp taskwait
     }
 }
+
+void merge_p(keytype* A_start, keytype* A_end, keytype* B_start, keytype* B_end, keytype* R) {
+    while (A_start < A_end && B_start < B_end) {
+        if (*A_start <= *B_start) {
+            *R++ = *A_start++;
+        }
+        else {
+            *R++ = *B_start++;
+        }
+    }
+    while (A_start < A_end) {
+        *R++ = *A_start++;
+    }
+    while (B_start < B_end) {
+        *R++ = *B_start++;
+    }
+}
+
+void mergeSort_Serial (keytype* A, int l, int r) {
+    
+    if (l < r) {
+        int m = (l + r) / 2;
+        mergeSort_Serial(A, l, m);
+        mergeSort_Serial(A, m+1, r);
+        merge(A, l, m, r);
+    }
+}
+
+ 
+void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
+    /*if (r-l < N/8) {
+        quickSort(r-l+1, (A + l));
+        return;
+    }*/
+    if (l < r) {
+        int m = (l + r) / 2;
+        mergeSort(A, l, m, N, B);
+        mergeSort(A, m+1, r, N, B);
+        merge(A, l, m, r);
+    }
+}
+
 
 void merge(keytype* A, int l, int m, int r) {
     int n1 = m - l + 1;
