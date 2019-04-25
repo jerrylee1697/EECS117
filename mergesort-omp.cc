@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 #include "sort.hh"
 #include <omp.h>
@@ -23,21 +24,23 @@ mySort (int N, keytype* A)
     //     quickSort(N, A);
     //     return;
     // }
-
+    vector<keytype> B(N);
     
 //   #pragma omp single nowait
-    // mergeSort(A, 0, N-1, N);
+    // mergeSort(A, 0, N-1, N, &B[0]);
     // for (int i = 0; i < N; ++i ) {
     //     cout << A[i] << ' ';
     // }
     // cout << endl << "After: \n";
-    keytype* B = newKeys (N);
-    #pragma omp parallel
+    // keytype* B = newKeys (N);
+    
+    #pragma omp parallel shared(A)
     #pragma omp single
-    pmergeSort(A, 0, N-1, B, 0);
+    pmergeSort(A, 0, N-1, &B[0], 0);
     // mergeSort(A, 0, N-1, N, B);
     // A = B;
 
+    #pragma omp prallel
     for (int i = 0; i < N; ++i ) {
         A[i] = B[i];
         // cout << A[i] << ' ';
@@ -51,7 +54,8 @@ mySort (int N, keytype* A)
     // A = B;
     // for (int i = 0; i < N; ++i ) {
     //     cout << A[i] << ' ';
-    // } cout << endl;
+    // } 
+    // cout << endl;
 }
 
  
@@ -62,14 +66,9 @@ void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
     }*/
     if (l < r) {
         int m = (l + r) / 2;
-        #pragma omp task
-        #pragma omp task shared(A)
         mergeSort(A, l, m, N, B);
         mergeSort(A, m+1, r, N, B);
-        #pragma omp taskwait
         merge(A, l, m, r);
-
-        // pmerge(A, l, m, m+1, r, B, l);
     }
 }
 
@@ -93,14 +92,15 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         B[s] = A[p];
     }
     else {
-        keytype* T = newKeys (n);
+        // keytype* T = newKeys (n);
+        vector<keytype> T(n+1);
         int q = (p + r) / 2;
         int q_1 = q - p + 1;
-        #pragma omp task
-        pmergeSort(A, p, q, T, 1);
-        pmergeSort(A, q + 1, r, T, q_1 + 1);
+        #pragma omp task shared (A,T)
+        pmergeSort(A, p, q, &T[0], 1);
+        pmergeSort(A, q + 1, r, &T[0], q_1 + 1);
         #pragma omp taskwait
-        pmerge(T, 1, q_1, q_1 + 1, n, B, s);
+        pmerge(&T[0], 1, q_1, q_1 + 1, n, B, s);
         // free(T);
     }
 }
