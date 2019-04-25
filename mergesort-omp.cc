@@ -167,7 +167,7 @@ void merge_p(keytype* A_start, keytype* A_end, keytype* B_start, keytype* B_end,
 
  
 void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
-    if (r-l < N/8) {
+    if (r-l < N/omp_get_num_threads()) {
         quickSort(r-l+1, (A + l));
         return;
     }
