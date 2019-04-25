@@ -51,7 +51,7 @@ void mergeSort_Serial (keytype* A, int l, int r, int N, keytype* B);
 
 void merge(keytype* A, int l, int m, int r, int N, keytype* B);
 
-void pmergeSort(keytype* A, int p, int r, keytype* B, int s);
+void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size);
 
 void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3);
 

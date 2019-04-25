@@ -40,7 +40,7 @@ mySort (int N, keytype* A)
 
     #pragma omp parallel shared(A)
     #pragma omp single 
-    pmergeSort(A, 0, N-1, B, 0);
+    pmergeSort(A, 0, N-1, B, 0, N);
 
     // mergeSort(A, 0, N-1, N, B);
     // A = B;
@@ -81,12 +81,12 @@ mySequentialSort (int N, keytype* A) {
 
 
 
-void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
+void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size) {
     int n = r - p + 1;
     if (n == 1) {
         B[s] = A[p];
     }
-    if (n < 8192) {
+    if (n < size/omp_get_num_procs()) { //8192
         // #pragma omp parallel for
         // for (int i = 0; i < r-p+1; ++i) {
         //     B[s+i] = A[p+i];
@@ -110,9 +110,9 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         int q = (p + r) / 2;
         int q_1 = q - p + 1;
         #pragma omp task
-        pmergeSort(A, p, q, T, 0);
+        pmergeSort(A, p, q, T, 0, size);
         #pragma omp task
-        pmergeSort(A, q + 1, r, T, q_1);
+        pmergeSort(A, q + 1, r, T, q_1, size);
         #pragma omp taskwait
         pmerge(T, 0, q_1-1, q_1, n-1, B, s);
         free(T);
