@@ -41,7 +41,7 @@ mySort (int N, keytype* A)
     // A = B;
 
     // #pragma omp parallel for
-    #pragma omp simd
+    #pragma omp parallel for
     for (int i = 0; i < N; ++i ) {
         A[i] = B[i];
         // cout << A[i] << ' ';
@@ -66,6 +66,18 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
     int n = r - p + 1;
     if (n == 1) {
         B[s] = A[p];
+    }
+    if (r-p < 8192) {
+        #pragma omp parallel for
+        for (int i = 0; i < r-p+1; ++i) {
+            B[s+i] = A[p+i];
+        }
+        // mergeSort (B, s, s+(r-p), r-p+1, B);
+        quickSort(r-p+1, B + s);
+        // for (int i = 0; i < p-r+1; ++i) {
+        //     cout << B[s+i] << ' ';
+        // }cout << endl;
+        return;
     }
     else {
         keytype* T = newKeys (n);
@@ -131,7 +143,7 @@ void mergeSort_Serial (keytype* A, int l, int r) {
         int m = (l + r) / 2;
         mergeSort_Serial(A, l, m);
         mergeSort_Serial(A, m+1, r);
-        merge(A, l, m, r);
+        // merge(A, l, m, r);
     }
 }
 
@@ -145,12 +157,12 @@ void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
         int m = (l + r) / 2;
         mergeSort(A, l, m, N, B);
         mergeSort(A, m+1, r, N, B);
-        merge(A, l, m, r);
+        merge(A, l, m, r, N, B);
     }
 }
 
 
-void merge(keytype* A, int l, int m, int r) {
+void merge(keytype* A, int l, int m, int r, int N, keytype* B) {
     int n1 = m - l + 1;
     int n2 = r - m;
 
