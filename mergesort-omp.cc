@@ -73,7 +73,7 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
     if (n == 1) {
         B[s] = A[p];
     }
-    if (r-p < 8192) {
+    if (n < 8192) {
         #pragma omp parallel for
         for (int i = 0; i < r-p+1; ++i) {
             B[s+i] = A[p+i];
