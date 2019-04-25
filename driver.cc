@@ -22,8 +22,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "timer.c"
+#include <iostream>
 
 #include "sort.hh"
+using namespace std;
 
 /* ============================================================
  */
@@ -62,17 +64,19 @@ main (int argc, char* argv[])
   assertIsSorted (N, A_qs);
 
 
+
   /* Sort, Sequential Mergesort. */
   keytype* A_s = newCopy (N, A_in);
     keytype* B_s = newCopy (N, A_in);
   stopwatch_start (timer);
-  
   mySequentialSort (N, A_s);
   long double t_s = stopwatch_stop (timer);
   printf ("Sequential Merge sort: %Lg seconds ==> %Lg million keys per second\n",
 	  t_s, 1e-6 * N / t_s);
   assertIsSorted (N, A_s);
   assertIsEqual (N, A_s, A_qs);
+
+ 
 
   /* Sort, calling YOUR routine. */
   keytype* A_ms = newCopy (N, A_in);
