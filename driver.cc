@@ -64,17 +64,28 @@ main (int argc, char* argv[])
   assertIsSorted (N, A_qs);
 
 
-
-  /* Sort, Sequential Mergesort. */
+ /* Sort, Sequential Mergesort. */
   keytype* A_s = newCopy (N, A_in);
     keytype* B_s = newCopy (N, A_in);
   stopwatch_start (timer);
   mySequentialSort (N, A_s);
   long double t_s = stopwatch_stop (timer);
-  printf ("Sequential Merge sort: %Lg seconds ==> %Lg million keys per second\n",
+  printf ("Sequential Mergesort: %Lg seconds ==> %Lg million keys per second\n",
 	  t_s, 1e-6 * N / t_s);
   assertIsSorted (N, A_s);
   assertIsEqual (N, A_s, A_qs);
+
+
+  /* Sort, Parallel Mergesort. */
+  keytype* A_Ps = newCopy (N, A_in);
+    keytype* B_Ps = newCopy (N, A_in);
+  stopwatch_start (timer);
+  myParallelMergeSort (N, A_Ps);
+  long double t_Ps = stopwatch_stop (timer);
+  printf ("Parallel Mergesort: %Lg seconds ==> %Lg million keys per second\n",
+	  t_Ps, 1e-6 * N / t_Ps);
+  assertIsSorted (N, A_Ps);
+  assertIsEqual (N, A_Ps, A_qs);
 
  
 
@@ -83,7 +94,7 @@ main (int argc, char* argv[])
   stopwatch_start (timer);
   mySort (N, A_ms);
   long double t_ms = stopwatch_stop (timer);
-  printf ("My sort: %Lg seconds ==> %Lg million keys per second\n",
+  printf ("My PMerge sort: %Lg seconds ==> %Lg million keys per second\n",
 	  t_ms, 1e-6 * N / t_ms);
   assertIsSorted (N, A_ms);
   assertIsEqual (N, A_ms, A_qs);

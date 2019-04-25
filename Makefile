@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS =
-COPTFLAGS = -O3 -g -fopenmp
+COPTFLAGS = -O3 -g
 LDFLAGS = 
 
 default:

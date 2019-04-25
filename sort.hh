@@ -23,6 +23,8 @@ void quickSort (int N, keytype* A);
  */
 void mySort (int N, keytype* A);
 
+void myParallelMergeSort (int N, keytype* A);
+
 void mySequentialSort (int N, keytype* A);
 
 /** Returns a new uninitialized array of length N */
@@ -45,7 +47,7 @@ void assertIsEqual (int N, const keytype* A, const keytype* B);
 
 void mergeSort (keytype* A, int l, int r, int N, keytype* B);
 
-void mergeSort_Serial (keytype* A, int l, int r);
+void mergeSort_Serial (keytype* A, int l, int r, int N, keytype* B);
 
 void merge(keytype* A, int l, int m, int r, int N, keytype* B);
 

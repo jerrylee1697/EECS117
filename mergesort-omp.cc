@@ -68,10 +68,15 @@ mySort (int N, keytype* A)
 }
 
 void
-mySequentialSort (int N, keytype* A) {
-    #pragma omp parallel shared(A)
+myParallelMergeSort (int N, keytype* A) {
+    #pragma omp parallel
     #pragma omp single
     mergeSort(A, 0, N-1, N, A);
+}
+
+void
+mySequentialSort (int N, keytype* A) {
+    mergeSort_Serial(A, 0, N-1, N, A);
 }
 
 
@@ -86,12 +91,14 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         // for (int i = 0; i < r-p+1; ++i) {
         //     B[s+i] = A[p+i];
         // }
-        // keytype* A_copy = newKeys (N);
+
         memcpy (B+s, A+p, n * sizeof (keytype));
 
-        // keytype* newCopy (int N, const keytype* A);
+
         //mergeSort (B, s, s+(r-p), r-p+1, B);
         quickSort(r-p+1, B + s);
+        // pmergeSort(A, p, q, T, 0);
+        // pmergeSort(A, q + 1, r, T, q_1);
         // for (int i = 0; i < p-r+1; ++i) {
         //     cout << B[s+i] << ' ';
         // }cout << endl;
@@ -102,9 +109,9 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         // vector<keytype> T(n+1);
         int q = (p + r) / 2;
         int q_1 = q - p + 1;
-        #pragma omp task shared (A,T)
+        #pragma omp task
         pmergeSort(A, p, q, T, 0);
-        #pragma omp task shared (A,T)
+        #pragma omp task
         pmergeSort(A, q + 1, r, T, q_1);
         #pragma omp taskwait
         pmerge(T, 0, q_1-1, q_1, n-1, B, s);
@@ -169,10 +176,10 @@ void mergeSort_Serial (keytype* A, int l, int r) {
 
  
 void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
-    if (r-l < N/8) {
-        quickSort(r-l+1, (A + l));
-        return;
-    }
+    // if (r-l < N/8) {
+    //     quickSort(r-l+1, (A + l));
+    //     return;
+    // }
     if (l < r) {
         int m = (l + r) / 2;
         #pragma omp task
@@ -242,4 +249,14 @@ int binarySearch(int x, keytype *A, int p, int r) {
     }
     return h;
 }
+
+void mergeSort_Serial (keytype* A, int l, int r, int N, keytype* B) {
+    if (l < r) {
+        int m = (l + r) / 2;
+        mergeSort(A, l, m, N, B);
+        mergeSort(A, m+1, r, N, B);
+        merge(A, l, m, r, N, B);
+    }
+}
+
 /* eof */
