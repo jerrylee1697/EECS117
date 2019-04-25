@@ -37,7 +37,7 @@ mySort (int N, keytype* A)
     keytype* B = newKeys (N);
 
     // cout << A[0] << endl;
-
+    // #pragma omp_set_num_threads(8)
     #pragma omp parallel shared(A)
     #pragma omp single 
     pmergeSort(A, 0, N-1, B, 0, N);
@@ -69,6 +69,7 @@ mySort (int N, keytype* A)
 
 void
 myParallelMergeSort (int N, keytype* A) {
+    // #pragma omp_set_num_threads(8)
     #pragma omp parallel 
     #pragma omp single
     mergeSort(A, 0, N-1, N, A);
@@ -93,17 +94,10 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size) {
         // for (int i = 0; i < r-p+1; ++i) {
         //     B[s+i] = A[p+i];
         // }
-
         memcpy (B+s, A+p, n * sizeof (keytype));
-
-
         //mergeSort (B, s, s+(r-p), r-p+1, B);
         quickSort(r-p+1, B + s);
-        // pmergeSort(A, p, q, T, 0);
-        // pmergeSort(A, q + 1, r, T, q_1);
-        // for (int i = 0; i < p-r+1; ++i) {
-        //     cout << B[s+i] << ' ';
-        // }cout << endl;
+
         return;
     }
     else {
@@ -135,6 +129,7 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
         return;
     if (n1 + n2 <= 8192) {
         merge_p(&T[p1], &T[p1 + n1], &T[p2], &T[p2 + n2], &A[p3]);
+        return;
     }
     else {
         int q1 = (p1 + r1) / 2;
