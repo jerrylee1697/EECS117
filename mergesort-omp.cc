@@ -59,6 +59,12 @@ mySort (int N, keytype* A)
     // cout << endl;
 }
 
+void
+mySequentialSort (int N, keytype* A) {
+    #pragma omp parallel shared(A)
+    #pragma omp single
+    mergeSort(A, 0, N-1, N, A);
+}
 
 
 
@@ -89,7 +95,7 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         pmergeSort(A, q + 1, r, T, q_1);
         #pragma omp taskwait
         pmerge(T, 0, q_1-1, q_1, n-1, B, s);
-        // free(T);
+        free(T);
     }
 }
 
@@ -155,8 +161,10 @@ void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
     }*/
     if (l < r) {
         int m = (l + r) / 2;
+        #pragma omp task
         mergeSort(A, l, m, N, B);
         mergeSort(A, m+1, r, N, B);
+        #pragma omp taskwait
         merge(A, l, m, r, N, B);
     }
 }
