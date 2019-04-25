@@ -86,7 +86,9 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size) {
     if (n == 1) {
         B[s] = A[p];
     }
-    if (n < size/omp_get_num_procs()) { //8192
+    // cout << "SIZE: " << size << endl;
+    else if (n < size/omp_get_max_threads()) { //8192 omp_get_num_procs()
+        // cout << "Procs: " << size/omp_get_max_threads() << endl;
         // #pragma omp parallel for
         // for (int i = 0; i < r-p+1; ++i) {
         //     B[s+i] = A[p+i];
@@ -167,7 +169,7 @@ void merge_p(keytype* A_start, keytype* A_end, keytype* B_start, keytype* B_end,
 
  
 void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
-    if (r-l < N/omp_get_num_threads()) {
+    if (r-l < N/omp_get_max_threads()) {
         quickSort(r-l+1, (A + l));
         return;
     }
