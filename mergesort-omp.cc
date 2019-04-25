@@ -84,35 +84,41 @@ mySequentialSort (int N, keytype* A) {
 
 void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size) {
     int n = r - p + 1;
+    
+    keytype* T = newKeys (n);
+    // vector<keytype> T(n+1);
+    int q = (p + r) / 2;
+    int q_1 = q - p + 1;
+
     if (n == 1) {
         B[s] = A[p];
     }
-    // cout << "SIZE: " << size << endl;
     else if (n < size/omp_get_max_threads()) { //8192 omp_get_num_procs()
         // cout << "Procs: " << size/omp_get_max_threads() << endl;
         // #pragma omp parallel for
         // for (int i = 0; i < r-p+1; ++i) {
         //     B[s+i] = A[p+i];
         // }
-        memcpy (B+s, A+p, n * sizeof (keytype));
+        // memcpy (B+s, A+p, n * sizeof (keytype));
         //mergeSort (B, s, s+(r-p), r-p+1, B);
-        quickSort(r-p+1, B + s);
-
-        return;
+        pmergeSort(A, p,     q, T, 0,   size);
+        pmergeSort(A, q + 1, r, T, q_1, size);
+        // quickSort(r-p+1, B + s);
+        pmerge(T, 0, q_1-1, q_1, n-1, B, s);
     }
     else {
-        keytype* T = newKeys (n);
-        // vector<keytype> T(n+1);
-        int q = (p + r) / 2;
-        int q_1 = q - p + 1;
+        // keytype* T = newKeys (n);
+        // int q = (p + r) / 2;
+        // int q_1 = q - p + 1;
         #pragma omp task
-        pmergeSort(A, p, q, T, 0, size);
-        #pragma omp task
+        pmergeSort(A, p,     q, T, 0,   size);
+        // #pragma omp task
         pmergeSort(A, q + 1, r, T, q_1, size);
         #pragma omp taskwait
         pmerge(T, 0, q_1-1, q_1, n-1, B, s);
-        free(T);
     }
+    // pmerge(T, 0, q_1-1, q_1, n-1, B, s);
+    free(T);
 }
 
 
