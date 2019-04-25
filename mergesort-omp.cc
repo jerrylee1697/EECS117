@@ -35,12 +35,13 @@ mySort (int N, keytype* A)
     // keytype* B = newKeys (N);
     
     #pragma omp parallel shared(A)
-    #pragma omp single
+    #pragma omp single 
     pmergeSort(A, 0, N-1, &B[0], 0);
     // mergeSort(A, 0, N-1, N, B);
     // A = B;
 
-    #pragma omp prallel
+    // #pragma omp parallel for
+    #pragma omp simd
     for (int i = 0; i < N; ++i ) {
         A[i] = B[i];
         // cout << A[i] << ' ';
@@ -67,15 +68,15 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         B[s] = A[p];
     }
     else {
-        // keytype* T = newKeys (n);
-        vector<keytype> T(n+1);
+        keytype* T = newKeys (n);
+        // vector<keytype> T(n+1);
         int q = (p + r) / 2;
         int q_1 = q - p + 1;
         #pragma omp task shared (A,T)
-        pmergeSort(A, p, q, &T[0], 1);
-        pmergeSort(A, q + 1, r, &T[0], q_1 + 1);
+        pmergeSort(A, p, q, T, 0);
+        pmergeSort(A, q + 1, r, T, q_1);
         #pragma omp taskwait
-        pmerge(&T[0], 1, q_1, q_1 + 1, n, B, s);
+        pmerge(T, 0, q_1-1, q_1, n-1, B, s);
         // free(T);
     }
 }
