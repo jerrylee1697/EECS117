@@ -24,7 +24,7 @@ mySort (int N, keytype* A)
     //     quickSort(N, A);
     //     return;
     // }
-    vector<keytype> B(N);
+    // vector<keytype> B(N);
     
 //   #pragma omp single nowait
     // mergeSort(A, 0, N-1, N, &B[0]);
@@ -32,11 +32,11 @@ mySort (int N, keytype* A)
     //     cout << A[i] << ' ';
     // }
     // cout << endl << "After: \n";
-    // keytype* B = newKeys (N);
+    keytype* B = newKeys (N);
     
     #pragma omp parallel shared(A)
     #pragma omp single 
-    pmergeSort(A, 0, N-1, &B[0], 0);
+    pmergeSort(A, 0, N-1, B, 0);
     // mergeSort(A, 0, N-1, N, B);
     // A = B;
 
@@ -46,7 +46,7 @@ mySort (int N, keytype* A)
         A[i] = B[i];
         // cout << A[i] << ' ';
     }
-    // free(B);
+    free(B);
 
 
     // } cout << endl;
@@ -78,8 +78,8 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         for (int i = 0; i < r-p+1; ++i) {
             B[s+i] = A[p+i];
         }
-        mergeSort (B, s, s+(r-p), r-p+1, B);
-        // quickSort(r-p+1, B + s);
+        //mergeSort (B, s, s+(r-p), r-p+1, B);
+        quickSort(r-p+1, B + s);
         // for (int i = 0; i < p-r+1; ++i) {
         //     cout << B[s+i] << ' ';
         // }cout << endl;
