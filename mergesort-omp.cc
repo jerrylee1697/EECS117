@@ -135,7 +135,6 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
         return;
     if (n1 + n2 <= 8192) {
         merge_p(&T[p1], &T[p1 + n1], &T[p2], &T[p2 + n2], &A[p3]);
-        return;
     }
     else {
         int q1 = (p1 + r1) / 2;
@@ -144,7 +143,7 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
         A[q3] = T[q1];
         #pragma omp task
         pmerge(T, p1, q1-1, p2, q2 - 1, A, p3);
-        #pragma omp task
+        // #pragma omp task
         pmerge(T, q1 + 1, r1, q2, r2, A, q3 + 1);
         #pragma omp taskwait
     }
@@ -170,12 +169,15 @@ void merge_p(keytype* A_start, keytype* A_end, keytype* B_start, keytype* B_end,
 
  
 void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
-    if (r-l < N/omp_get_max_threads()) {
-        quickSort(r-l+1, (A + l));
+    int m = (l + r) / 2;
+    if (r-l+1 < N/omp_get_max_threads() && l < r) {
+        // cout << "hello" << endl;
+        mergeSort(A, l, m, N, B);
+        mergeSort(A, m+1, r, N, B);
+        merge(A, l, m, r, N, B);
         return;
     }
     if (l < r) {
-        int m = (l + r) / 2;
         #pragma omp task
         mergeSort(A, l, m, N, B);
         #pragma omp task
