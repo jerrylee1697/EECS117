@@ -112,12 +112,11 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size) {
         // int q_1 = q - p + 1;
         #pragma omp task
         pmergeSort(A, p,     q, T, 0,   size);
-        // #pragma omp task
+        #pragma omp task
         pmergeSort(A, q + 1, r, T, q_1, size);
         #pragma omp taskwait
         pmerge(T, 0, q_1-1, q_1, n-1, B, s);
     }
-    // pmerge(T, 0, q_1-1, q_1, n-1, B, s);
     free(T);
 }
 
@@ -142,9 +141,9 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
         int q3 = p3 + (q1 - p1) + (q2 - p2);
         A[q3] = T[q1];
         #pragma omp task
-        pmerge(T, p1, q1-1, p2, q2 - 1, A, p3);
-        // #pragma omp task
-        pmerge(T, q1 + 1, r1, q2, r2, A, q3 + 1);
+        pmerge(T, p1,     q1-1, p2, q2 - 1, A, p3     );
+        #pragma omp task
+        pmerge(T, q1 + 1, r1,   q2, r2,     A, q3 + 1);
         #pragma omp taskwait
     }
 }
@@ -171,7 +170,6 @@ void merge_p(keytype* A_start, keytype* A_end, keytype* B_start, keytype* B_end,
 void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
     int m = (l + r) / 2;
     if (r-l+1 < N/omp_get_max_threads() && l < r) {
-        // cout << "hello" << endl;
         mergeSort(A, l, m, N, B);
         mergeSort(A, m+1, r, N, B);
         merge(A, l, m, r, N, B);
@@ -192,8 +190,10 @@ void merge(keytype* A, int l, int m, int r, int N, keytype* B) {
     int n1 = m - l + 1;
     int n2 = r - m;
 
-    keytype* L = new keytype[n1];
-    keytype* R = new keytype[n2];
+    keytype* L = newKeys (n1);
+    keytype* R = newKeys (n2);
+    // keytype* L = new keytype[n1];
+    // keytype* R = new keytype[n2];
     
     for (int i = 0; i < n1; ++i) {
         L[i] = A[l + i];
@@ -229,6 +229,8 @@ void merge(keytype* A, int l, int m, int r, int N, keytype* B) {
         ++j;
         ++k;
     }
+    free(L);
+    free(R);
 }
 
 int binarySearch(int x, keytype *A, int p, int r) {
