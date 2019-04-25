@@ -78,8 +78,8 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         for (int i = 0; i < r-p+1; ++i) {
             B[s+i] = A[p+i];
         }
-        // mergeSort (B, s, s+(r-p), r-p+1, B);
-        quickSort(r-p+1, B + s);
+        mergeSort (B, s, s+(r-p), r-p+1, B);
+        // quickSort(r-p+1, B + s);
         // for (int i = 0; i < p-r+1; ++i) {
         //     cout << B[s+i] << ' ';
         // }cout << endl;
@@ -155,10 +155,10 @@ void mergeSort_Serial (keytype* A, int l, int r) {
 
  
 void mergeSort (keytype* A, int l, int r, int N, keytype* B) {
-    /*if (r-l < N/8) {
+    if (r-l < N/8) {
         quickSort(r-l+1, (A + l));
         return;
-    }*/
+    }
     if (l < r) {
         int m = (l + r) / 2;
         #pragma omp task
