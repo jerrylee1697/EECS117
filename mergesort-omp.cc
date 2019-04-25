@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <string.h>
+#include <strings.h>
 
 #include "sort.hh"
 #include <omp.h>
@@ -40,12 +42,14 @@ mySort (int N, keytype* A)
     // mergeSort(A, 0, N-1, N, B);
     // A = B;
 
+
     // #pragma omp parallel for
-    #pragma omp parallel for
-    for (int i = 0; i < N; ++i ) {
-        A[i] = B[i];
-        // cout << A[i] << ' ';
-    }
+    // for (int i = 0; i < N; ++i ) {
+    //     A[i] = B[i];
+    //     // cout << A[i] << ' ';
+    // }
+
+    memcpy (A, B, N * sizeof (keytype));
     free(B);
 
 
@@ -74,10 +78,14 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s) {
         B[s] = A[p];
     }
     if (n < 8192) {
-        #pragma omp parallel for
-        for (int i = 0; i < r-p+1; ++i) {
-            B[s+i] = A[p+i];
-        }
+        // #pragma omp parallel for
+        // for (int i = 0; i < r-p+1; ++i) {
+        //     B[s+i] = A[p+i];
+        // }
+        // keytype* A_copy = newKeys (N);
+        memcpy (B+s, A, n * sizeof (keytype));
+
+        // keytype* newCopy (int N, const keytype* A);
         //mergeSort (B, s, s+(r-p), r-p+1, B);
         quickSort(r-p+1, B + s);
         // for (int i = 0; i < p-r+1; ++i) {
