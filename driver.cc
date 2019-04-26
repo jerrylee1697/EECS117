@@ -25,7 +25,7 @@
 #include <iostream>
 
 #include "sort.hh"
-using namespace std;
+// using namespace std;
 
 /* ============================================================
  */
@@ -78,7 +78,7 @@ main (int argc, char* argv[])
 
   /* Sort, Parallel Mergesort. */
   keytype* A_Ps = newCopy (N, A_in);
-    keytype* B_Ps = newCopy (N, A_in);
+  keytype* B_Ps = newCopy (N, A_in);
   stopwatch_start (timer);
   myParallelMergeSort (N, A_Ps);
   long double t_Ps = stopwatch_stop (timer);
@@ -103,8 +103,12 @@ main (int argc, char* argv[])
   printf ("\n");
   free (A_in);
   free (A_qs);
-  free (A_ms);
+  free (A_s);
   free (B_s);
+  free (A_Ps);
+  free (B_Ps);
+  free (A_ms);
+
   stopwatch_destroy (timer);
   return 0;
 }

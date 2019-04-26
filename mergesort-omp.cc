@@ -11,72 +11,32 @@
 #include <iostream>
 #include <vector>
 #include <string.h>
-#include <strings.h>
+// #include <strings.h>
 
 #include "sort.hh"
 #include <omp.h>
 
-using namespace std;
+// using namespace std;
 
-void
-mySort (int N, keytype* A)
-{
-  /* Lucky you, you get to start from scratch */
-    // if (N <= 10000) {
-    //     quickSort(N, A);
-    //     return;
-    // }
-    // vector<keytype> B(N);
-    
-//   #pragma omp single nowait
-    // mergeSort(A, 0, N-1, N, &B[0]);
-    // for (int i = 0; i < N; ++i ) {
-    //     cout << A[i] << ' ';
-    // }
-    // cout << endl << "After: \n";
+void mySort (int N, keytype* A) {
     keytype* B = newKeys (N);
 
-    // cout << A[0] << endl;
-    // #pragma omp_set_num_threads(8)
     #pragma omp parallel shared(A)
     #pragma omp single 
     pmergeSort(A, 0, N-1, B, 0, N);
 
-    // mergeSort(A, 0, N-1, N, B);
-    // A = B;
-
-
-    // #pragma omp parallel for
-    // for (int i = 0; i < N; ++i ) {
-    //     // A[i] = B[i];
-    //     cout << A[i] << ' ';
-    // } cout << endl;
-    // cout << A[0] << " and B: " << B[0] << endl;
     memcpy (A, B, N * sizeof (keytype));
-    // cout << A[0] << " and B: " << B[0] << endl;
+    
     free(B);
-
-
-    // } cout << endl;
-    // cout << "Regular Merge " << endl;
-    // mergeSort(A, 0, N-1, N, B);
-    // A = B;
-    // for (int i = 0; i < N; ++i ) {
-    //     cout << A[i] << ' ';
-    // } 
-    // cout << endl;
 }
 
-void
-myParallelMergeSort (int N, keytype* A) {
-    // #pragma omp_set_num_threads(8)
+void myParallelMergeSort (int N, keytype* A) {
     #pragma omp parallel 
     #pragma omp single
     mergeSort(A, 0, N-1, N, A);
 }
 
-void
-mySequentialSort (int N, keytype* A) {
+void mySequentialSort (int N, keytype* A) {
     mergeSort_Serial(A, 0, N-1, N, A);
 }
 
@@ -86,7 +46,6 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size) {
     int n = r - p + 1;
     
     keytype* T = newKeys (n);
-    // vector<keytype> T(n+1);
     int q = (p + r) / 2;
     int q_1 = q - p + 1;
 
@@ -94,22 +53,12 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size) {
         B[s] = A[p];
     }
     else if (n < size/omp_get_max_threads()) { //8192 omp_get_num_procs()
-        // cout << "Procs: " << size/omp_get_max_threads() << endl;
-        // #pragma omp parallel for
-        // for (int i = 0; i < r-p+1; ++i) {
-        //     B[s+i] = A[p+i];
-        // }
-        // memcpy (B+s, A+p, n * sizeof (keytype));
-        //mergeSort (B, s, s+(r-p), r-p+1, B);
+        
         pmergeSort(A, p,     q, T, 0,   size);
         pmergeSort(A, q + 1, r, T, q_1, size);
-        // quickSort(r-p+1, B + s);
         pmerge(T, 0, q_1-1, q_1, n-1, B, s);
     }
     else {
-        // keytype* T = newKeys (n);
-        // int q = (p + r) / 2;
-        // int q_1 = q - p + 1;
         #pragma omp task
         pmergeSort(A, p,     q, T, 0,   size);
         #pragma omp task
@@ -117,7 +66,7 @@ void pmergeSort(keytype* A, int p, int r, keytype* B, int s, int size) {
         #pragma omp taskwait
         pmerge(T, 0, q_1-1, q_1, n-1, B, s);
     }
-    free(T);
+    free (T);
 }
 
 
@@ -126,9 +75,9 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
     int n2 = r2 - p2 + 1;
 
     if (n1 < n2) {  // Ensure that n1 >= n2
-        swap(p1, p2);
-        swap(r1, r2);
-        swap(n1, n2);
+        std::swap(p1, p2);
+        std::swap(r1, r2);
+        std::swap(n1, n2);
     }
     if (n1 == 0) 
         return;
@@ -149,19 +98,22 @@ void pmerge(keytype* T, int p1, int r1, int p2, int r2, keytype *A, int p3) {
 }
 
 void merge_p(keytype* A_start, keytype* A_end, keytype* B_start, keytype* B_end, keytype* R) {
-    while (A_start < A_end && B_start < B_end) {
-        if (*A_start <= *B_start) {
-            *R++ = *A_start++;
+    int counter_a = 0;
+    int counter_b = 0;
+    int counter_r = 0;
+    while (A_start + counter_a < A_end && B_start + counter_b < B_end) {
+        if (*(A_start + counter_a) <= *(B_start + counter_b)) {
+            *(R + counter_r++) = *(A_start +counter_a++);
         }
         else {
-            *R++ = *B_start++;
+            *(R + counter_r++) = *(B_start + counter_b++);
         }
     }
-    while (A_start < A_end) {
-        *R++ = *A_start++;
+    while (A_start + counter_a < A_end) {
+        *(R + counter_r++) = *(A_start + counter_a++);
     }
-    while (B_start < B_end) {
-        *R++ = *B_start++;
+    while (B_start  + counter_b < B_end) {
+        *(R + counter_r++) = *(B_start + counter_b++);
     }
 }
 
@@ -192,8 +144,6 @@ void merge(keytype* A, int l, int m, int r, int N, keytype* B) {
 
     keytype* L = newKeys (n1);
     keytype* R = newKeys (n2);
-    // keytype* L = new keytype[n1];
-    // keytype* R = new keytype[n2];
     
     for (int i = 0; i < n1; ++i) {
         L[i] = A[l + i];
@@ -235,7 +185,7 @@ void merge(keytype* A, int l, int m, int r, int N, keytype* B) {
 
 int binarySearch(int x, keytype *A, int p, int r) {
     int l = p;
-    int h = max(p, r + 1);
+    int h = std::max(p, r + 1);
     while (l < h) {
         int mid = (l + h) / 2;
         if (x <= A[mid]) {
