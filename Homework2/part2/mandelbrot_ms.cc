@@ -4,6 +4,13 @@
  *  \brief Implement your parallel mandelbrot set in this file.
  */
 
+
+/*
+ *# Run the program 
+    mpirun -np 64  ./mandelbrot_ms 1000 1000
+    -np <number of processes>
+ * 
+ */
 #include <iostream>
 #include <cstdlib>
 #include <assert.h> 

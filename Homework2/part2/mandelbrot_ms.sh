@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -N Mandelbrot
-#$ -q class
+#$ -q free64
 #$ -pe one-node-mpi 1
 #$ -R y
 
