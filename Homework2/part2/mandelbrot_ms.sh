@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -N Mandelbrot
-#$ -q free64
+#$ -q class
 #$ -pe one-node-mpi 2-64
 #$ -R y
 #$ -ckpt restart
