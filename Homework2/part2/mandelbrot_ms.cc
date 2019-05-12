@@ -160,7 +160,7 @@ void master() {
 			&status);	/* info about received message */
         j_recv++;
 
-		MPI_Send(values[i][j], 2, MPI_INT, status.MPI_SOURCE,
+		MPI_Send(values[j][i], 2, MPI_INT, status.MPI_SOURCE,
 				WORKTAG, MPI_COMM_WORLD);
 
 		// work = /* get_next_work_request */;

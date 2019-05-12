@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot
 #$ -q class
-#$ -pe one-node-mpi 2-64
+#$ -pe mpi 64
 #$ -R y
 #$ -ckpt restart
 
@@ -18,4 +18,4 @@ module load boost/1.57.0
 module load openmpi-1.8.3/gcc-4.9.2
 
 # Run the program 
-mpirun -np 64  ./mandelbrot_ms 1000 1000
+mpirun -np 16  ./mandelbrot_ms 1000 1000
