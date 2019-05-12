@@ -6,7 +6,10 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <assert.h> 
+#include "render.hh" 
 
+using namespace std;
 // int
 // main (int argc, char* argv[])
 // {
@@ -20,7 +23,25 @@
 #define WORKTAG		1
 #define DIETAG		2
 
+void master();
+void slave();
+int mandelbrot(double x, double y);
+
+int height;
+int width;
+
 int main (int argc, char* argv[]) {
+    if (argc == 3) {
+        height = atoi (argv[1]);
+        width = atoi (argv[2]);
+        assert (height > 0 && width > 0);
+    } else {
+        fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
+        fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
+        return -1;
+    }
+
+
 	int		myrank;
 
 	MPI_Init(&argc, &argv);		/* initialize MPI */
@@ -36,7 +57,7 @@ int main (int argc, char* argv[]) {
 	MPI_Finalize();			/* cleanup MPI */
 }
 
-master() {
+void master() {
 	int		ntasks, rank, work;
 	double		result;
 	MPI_Status	status;
@@ -46,16 +67,16 @@ master() {
     double minY = -1.25;
     double maxY = 1.25;
 
-    int height, width;
-    if (argc == 3) {
-        height = atoi (argv[1]);
-        width = atoi (argv[2]);
-        assert (height > 0 && width > 0);
-    } else {
-        fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
-        fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
-        return -1;
-    }
+    // int height, width;
+    // if (argc == 3) {
+    //     height = atoi (argv[1]);
+    //     width = atoi (argv[2]);
+    //     assert (height > 0 && width > 0);
+    // } else {
+    //     fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
+    //     fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
+    //     return -1;
+    // }
 
     double it = (maxY - minY)/height;
     double jt = (maxX - minX)/width;
@@ -125,7 +146,7 @@ master() {
 
 		MPI_Recv(result[j_recv][i_recv],	/* message buffer */
 			1,		/* one data item */
-			MPI_DOUBLE,	/* data item is a double real */
+			MPI_INT,	/* data item is a double real */
 			MPI_ANY_SOURCE,	/* receive from any sender */
 			MPI_ANY_TAG,	/* receive any type of message */
 			MPI_COMM_WORLD,	/* always use this */
@@ -144,7 +165,7 @@ master() {
 	for (rank = 1; rank < ntasks; ++rank) {
         i_recv = i_recv + j_recv/width;
         j_recv = j_recv%width;
-		MPI_Recv(result[j_recv][i_recv], 1, MPI_DOUBLE, MPI_ANY_SOURCE,
+		MPI_Recv(result[j_recv][i_recv], 1, MPI_INT, MPI_ANY_SOURCE,
 			    MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         j_recv++;
 	}
@@ -166,14 +187,17 @@ master() {
     gil::png_write_view("mandelbrot_ms.png", const_view(img));
 }
 
-slave() {
-	double		result;
-	int		    work;
+void slave() {
+	int		result;
+	int		    work[2];
 	MPI_Status	status;
 
 	for (;;) {
-		MPI_Recv(&work, 1, MPI_INT, 0, MPI_ANY_TAG,
+		MPI_Recv(work, 2, MPI_INT, 0, MPI_ANY_TAG,
 				MPI_COMM_WORLD, &status);
+        int x = work[0];
+        int y = work[1];
+
 /*
  * Check the tag of the received message.
  */
