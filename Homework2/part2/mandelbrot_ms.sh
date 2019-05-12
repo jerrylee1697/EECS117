@@ -3,6 +3,7 @@
 #$ -q free64
 #$ -pe one-node-mpi 1
 #$ -R y
+#$ -cpkt restart
 
 # Grid Engine Notes:
 # -----------------
