@@ -59,7 +59,7 @@ int main (int argc, char* argv[]) {
 
 void master() {
 	int		ntasks, rank, work;
-	double		result;
+	int		result;
 	MPI_Status	status;
     
     double minX = -2.1;
@@ -179,8 +179,8 @@ void master() {
 /*
  * Render all values
  */
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
+    for (i = 0; i < height; ++i) {
+        for (j = 0; j < width; ++j) {
             img_view(j, i) = render(result[j][i]/512.0);
         }
     }
@@ -205,7 +205,7 @@ void slave() {
 			return;
 		}
 
-		result = madelbrot(x,y);
+		result = mandelbrot(x,y);
 
 		MPI_Send(&result, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 	}
