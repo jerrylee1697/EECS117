@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot
 #$ -q free64
-#$ -pe one-node-mpi 1
+#$ -pe one-node-mpi 2-64
 #$ -R y
 #$ -ckpt restart
 
