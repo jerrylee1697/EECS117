@@ -144,7 +144,7 @@ void master() {
         i_recv = i_recv + j_recv/width;
         j_recv = j_recv%width;
 
-		MPI_Recv(result[j_recv][i_recv],	/* message buffer */
+		MPI_Recv(results[j_recv][i_recv],	/* message buffer */
 			1,		/* one data item */
 			MPI_INT,	/* data item is a double real */
 			MPI_ANY_SOURCE,	/* receive from any sender */
@@ -165,7 +165,7 @@ void master() {
 	for (rank = 1; rank < ntasks; ++rank) {
         i_recv = i_recv + j_recv/width;
         j_recv = j_recv%width;
-		MPI_Recv(result[j_recv][i_recv], 1, MPI_INT, MPI_ANY_SOURCE,
+		MPI_Recv(results[j_recv][i_recv], 1, MPI_INT, MPI_ANY_SOURCE,
 			    MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         j_recv++;
 	}
@@ -181,7 +181,7 @@ void master() {
  */
     for (i = 0; i < height; ++i) {
         for (j = 0; j < width; ++j) {
-            img_view(j, i) = render(result[j][i]/512.0);
+            img_view(j, i) = render(results[j][i]/512.0);
         }
     }
     gil::png_write_view("mandelbrot_ms.png", const_view(img));
