@@ -74,17 +74,6 @@ void master() {
     double minY = -1.25;
     double maxY = 1.25;
 
-    // int height, width;
-    // if (argc == 3) {
-    //     height = atoi (argv[1]);
-    //     width = atoi (argv[2]);
-    //     assert (height > 0 && width > 0);
-    // } else {
-    //     fprintf (stderr, "usage: %s <height> <width>\n", argv[0]);
-    //     fprintf (stderr, "where <height> and <width> are the dimensions of the image.\n");
-    //     return -1;
-    // }
-
     double it = (maxY - minY)/height;
     double jt = (maxX - minX)/width;
     double x, y;
@@ -151,13 +140,14 @@ void master() {
         i_recv = i_recv + j_recv / width;
         j_recv = j_recv % width;
 
-		MPI_Recv(&results[j_recv][i_recv],	/* message buffer */
+		MPI_Recv(&result,	/* message buffer */
 			1,		/* one data item */
 			MPI_INT,	/* data item is a double real */
 			MPI_ANY_SOURCE,	/* receive from any sender */
 			MPI_ANY_TAG,	/* receive any type of message */
 			MPI_COMM_WORLD,	/* always use this */
 			&status);	/* info about received message */
+        results[j_recv][i_recv] = result;
         j_recv++;
 
 		MPI_Send(values[j][i], 2, MPI_INT, status.MPI_SOURCE,
@@ -172,16 +162,12 @@ void master() {
 	for (rank = 1; rank < ntasks; ++rank) {
         i_recv = i_recv + j_recv/width;
         j_recv = j_recv%width;
-		MPI_Recv(&results[j_recv][i_recv], 1, MPI_INT, MPI_ANY_SOURCE,
+		MPI_Recv(&result, 1, MPI_INT, MPI_ANY_SOURCE,
 			    MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        results[j_recv][i_recv] = result;
         j_recv++;
 	}
-/*
- * Tell all the slaves to exit.
- */
-	for (rank = 1; rank < ntasks; ++rank) {
-		MPI_Send(0, 0, MPI_INT, rank, DIETAG, MPI_COMM_WORLD);
-	}
+
 
 /*
  * Render all values
@@ -192,6 +178,13 @@ void master() {
         }
     }
     gil::png_write_view("mandelbrot_ms.png", const_view(img));
+
+/*
+ * Tell all the slaves to exit.
+ */
+	for (rank = 1; rank < ntasks; ++rank) {
+		MPI_Send(0, 0, MPI_INT, rank, DIETAG, MPI_COMM_WORLD);
+	}
 }
 
 void slave() {
