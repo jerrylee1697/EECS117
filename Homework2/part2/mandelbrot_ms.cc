@@ -48,8 +48,8 @@ int main (int argc, char* argv[]) {
         return -1;
     }
 
-    cout << "Height: " << height << endl;
-    cout << "Width: " << width << endl;
+    // cout << "Height: " << height << endl;
+    // cout << "Width: " << width << endl;
 
 	int		myrank;
 
@@ -58,7 +58,7 @@ int main (int argc, char* argv[]) {
 			&myrank);	/* process rank, 0 thru N-1 */
     // MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 	// 		&ntasks);	/* #processes in application */
-    cout << "my rank: " << myrank << endl;
+    // cout << "my rank: " << myrank << endl;
     
 
 	if (myrank == 0) {
@@ -90,7 +90,7 @@ void master() {
 
 	MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 			&ntasks);	/* #processes in application */
-    cout << "tasks: " << ntasks << endl;
+    // cout << "tasks: " << ntasks << endl;
 /*
  * Seed the slaves.
  */
@@ -127,7 +127,7 @@ void master() {
 			MPI_COMM_WORLD);/* always use this */
         j++;
 	}
-    std::cout << "Enters while\n";
+    // std::cout << "Enters while\n";
 /*
  * Receive a result from any slave and dispatch a new work request
  * work requests have been exhausted.
@@ -137,9 +137,9 @@ void master() {
     int j_recv = 0;
 
 	while (i * width + j < width * height) {
-        if (i + j/width > i) {
-            std::cout << "i: " << i << std::endl;
-        }
+        // if (i + j/width > i) {
+            // std::cout << "i: " << i << std::endl;
+        // }
         i = i + j/width;
         j = j % width;
         
@@ -162,7 +162,7 @@ void master() {
 		// work = /* get_next_work_request */;
         j++;
 	}
-    std::cout << "Exits while\n";
+    // std::cout << "Exits while\n";
 /*
  * Receive results for outstanding work requests.
  */
@@ -174,7 +174,7 @@ void master() {
         results[j_recv][i_recv] = result;
         j_recv++;
 	}
-    std::cout << "Finishes gathering "<< i_recv << ' ' << j_recv << std::endl;;
+    // std::cout << "Finishes gathering "<< i_recv << ' ' << j_recv << std::endl;;
 
 /*
  * Render all values
@@ -204,7 +204,7 @@ void slave() {
 				MPI_COMM_WORLD, &status);
         double x = work[0];
         double y = work[1];
-        std::cout << "Working on " << x << ' ' << y << std::endl;
+        // std::cout << "Working on " << x << ' ' << y << std::endl;
 
 /*
  * Check the tag of the received message.
