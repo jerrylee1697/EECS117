@@ -98,6 +98,7 @@ void master() {
             // rank = i * width + j;
             values[j][i][0] = x;
             values[j][i][1] = y;
+            results[j][i] = 0;
             // MPI_Send(values[i][j],		/* message buffer */
 			// 2,		/* one data item */
 			// MPI_INT,	/* data item is an integer */
@@ -156,6 +157,7 @@ void master() {
 		// work = /* get_next_work_request */;
         j++;
 	}
+    std::cout << "Exits while\n";
 /*
  * Receive results for outstanding work requests.
  */
@@ -167,7 +169,7 @@ void master() {
         results[j_recv][i_recv] = result;
         j_recv++;
 	}
-
+    std::cout << "Finishes gathering "<< i_recv << ' ' << j_recv << std::endl;;
 
 /*
  * Render all values
