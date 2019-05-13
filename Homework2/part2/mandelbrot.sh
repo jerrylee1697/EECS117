@@ -14,8 +14,8 @@
 module load boost/1.57.0
 
 # Module load OpenMPI
-module load openmpi-1.8.3/gcc-4.9.2
-# module load mpich-3.0.4/gcc-4.8.3
+# module load openmpi-1.8.3/gcc-4.9.2
+module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
 mpirun -np 1  ./mandelbrot_serial 1000 1000
