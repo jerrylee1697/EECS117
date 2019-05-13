@@ -148,8 +148,8 @@ void master() {
         i = i + j/width;
         j = j % width;
         
-        i_recv = i_recv + j_recv/width;
-        j_recv = j_recv%width;
+        i_recv = i_recv + j_recv / width;
+        j_recv = j_recv % width;
 
 		MPI_Recv(&results[j_recv][i_recv],	/* message buffer */
 			1,		/* one data item */
