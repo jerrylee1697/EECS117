@@ -54,9 +54,9 @@ int main (int argc, char* argv[]) {
 	MPI_Init(&argc, &argv);		/* initialize MPI */
 	MPI_Comm_rank(MPI_COMM_WORLD,	/* always use this */
 			&myrank);	/* process rank, 0 thru N-1 */
-    MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
-			&ntasks);	/* #processes in application */
-    cout << "tasks: " << ntasks << endl;
+    // MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
+	// 		&ntasks);	/* #processes in application */
+    // cout << "tasks: " << ntasks << endl;
 
 	if (myrank == 0) {
 		master();
