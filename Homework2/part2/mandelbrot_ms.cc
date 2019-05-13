@@ -84,6 +84,7 @@ void master() {
 
 	MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 			&ntasks);	/* #processes in application */
+    cout << "tasks: " << ntasks << endl;
 /*
  * Seed the slaves.
  */
@@ -136,6 +137,9 @@ void master() {
     int j_recv = 0;
 
 	while (i * width + j < width * height) {
+        if (i + j/width > i) {
+            std::cout << "i: " << i << std::endl;
+        }
         i = i + j/width;
         j = j % width;
         
