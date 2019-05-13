@@ -26,6 +26,9 @@ main (int argc, char* argv[])
     // row to compute = p + nP for n = 0, 1, 2
     int n = 0;
     int row = myrank + n * ntasks;
+    int numberOfRows = 0;
+    // http://www.netlib.org/utk/papers/mpi-book/node98.html#SECTION00560000000000000000
+    int sendbuf[height / ntasks] ????
     while (row < height) {
         // Does entire row of p + nP
         y = minY + it * row;
@@ -37,6 +40,7 @@ main (int argc, char* argv[])
         }
         n++;
         row = myrank + n * ntasks;
+        numberOfRows += 1;
     }
     // https://www.mpi-forum.org/docs/mpi-1.1/mpi-11-html/node70.html
     // https://www.mcs.anl.gov/research/projects/mpi/mpi-standard/mpi-report-1.1/node70.htm
@@ -52,7 +56,7 @@ main (int argc, char* argv[])
         sendcount,
         sendtype,
         recvbuf,
-        recvcount,
+        numberOfRows * width, /*recvcount,*/
         MPI_INT,     /* recvtype */
         0,              /* root */
         MPI_COMM_WORLD  /* comm */
