@@ -19,4 +19,4 @@ module load openmpi-1.8.3/gcc-4.9.2
 # module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
-mpirun -np 8  ./mandelbrot_ms 100 100
+mpirun -np 8 ./mandelbrot_ms 100 100

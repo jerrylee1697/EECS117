@@ -57,6 +57,8 @@ int main (int argc, char* argv[]) {
     // MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 	// 		&ntasks);	/* #processes in application */
     cout << "my rank: " << myrank << endl;
+    cout << "Height: " << height << endl;
+    cout << "Width: " << width << endl;
 
 	if (myrank == 0) {
 		master();
