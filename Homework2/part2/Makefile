@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := all
 
-MPICC = mpixx
+MPICC = mpiCC
 MPICFLAGS = -std=c++11
 MPICOPTFLAGS = -O3 -g -lpng
 MPILDFLAGS =
