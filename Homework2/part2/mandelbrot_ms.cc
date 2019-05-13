@@ -95,7 +95,7 @@ void master() {
  * Seed the slaves.
  */
     // height, width, {x,y} to be passed
-    int values[width][height][2];
+    double values[width][height][2];
     int results[width][height];
 
     y = minY;
@@ -106,12 +106,6 @@ void master() {
             values[j][i][0] = x;
             values[j][i][1] = y;
             results[j][i] = 0;
-            // MPI_Send(values[i][j],		/* message buffer */
-			// 2,		/* one data item */
-			// MPI_INT,	/* data item is an integer */
-			// rank,		/* destination process rank */
-			// WORKTAG,	/* user chosen message tag */
-			// MPI_COMM_WORLD);/* always use this */
             x += jt;
         }
         y += it;
@@ -127,7 +121,7 @@ void master() {
 
 		MPI_Send(values[j][i],		/* message buffer */
 			2,		/* one data item */
-			MPI_INT,	/* data item is an integer */
+			MPI_DOUBLE,	/* data item is an integer */
 			rank,		/* destination process rank */
 			WORKTAG,	/* user chosen message tag */
 			MPI_COMM_WORLD);/* always use this */
@@ -162,7 +156,7 @@ void master() {
         results[j_recv][i_recv] = result;
         j_recv++;
 
-		MPI_Send(values[j][i], 2, MPI_INT, status.MPI_SOURCE,
+		MPI_Send(values[j][i], 2, MPI_DOUBLE, status.MPI_SOURCE,
 				WORKTAG, MPI_COMM_WORLD);
 
 		// work = /* get_next_work_request */;
@@ -202,14 +196,14 @@ void master() {
 
 void slave() {
 	int		result;
-	int		    work[2];
+	double		    work[2];
 	MPI_Status	status;
 
 	for (;;) {
-		MPI_Recv(work, 2, MPI_INT, 0, MPI_ANY_TAG,
+		MPI_Recv(work, 2, MPI_DOUBLE, 0, MPI_ANY_TAG,
 				MPI_COMM_WORLD, &status);
-        int x = work[0];
-        int y = work[1];
+        double x = work[0];
+        double y = work[1];
         std::cout << "Working on " << x << ' ' << y << std::endl;
 
 /*
