@@ -56,7 +56,7 @@ int main (int argc, char* argv[]) {
 			&myrank);	/* process rank, 0 thru N-1 */
     // MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 	// 		&ntasks);	/* #processes in application */
-    // cout << "tasks: " << ntasks << endl;
+    cout << "my rank: " << myrank << endl;
 
 	if (myrank == 0) {
 		master();
