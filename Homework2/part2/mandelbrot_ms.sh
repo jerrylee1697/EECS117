@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_MS
 #$ -q class
-#$ -pe mpi 8
+#$ -pe one-node-mpi 8
 #$ -R y
 #$ -ckpt restart
 
