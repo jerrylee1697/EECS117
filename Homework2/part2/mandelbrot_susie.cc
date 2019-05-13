@@ -104,7 +104,7 @@ int main (int argc, char* argv[]) {
                 img_view(j, i) = render(recvbuf(bufIndex + j)/512.0);
             }
         }
-        gil::png_write_view("mandelbrot_ms.png", const_view(img));
+        gil::png_write_view("mandelbrot_susie.png", const_view(img));
     }
 
 
