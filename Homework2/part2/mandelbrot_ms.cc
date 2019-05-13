@@ -126,6 +126,7 @@ void master() {
 			MPI_COMM_WORLD);/* always use this */
         j++;
 	}
+    std::cout << "Enters while\n";
 /*
  * Receive a result from any slave and dispatch a new work request
  * work requests have been exhausted.
@@ -199,6 +200,7 @@ void slave() {
 				MPI_COMM_WORLD, &status);
         int x = work[0];
         int y = work[1];
+        std::cout << "Working on " << x << ' ' << y << std::endl;
 
 /*
  * Check the tag of the received message.
