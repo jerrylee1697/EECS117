@@ -46,7 +46,7 @@ int main (int argc, char* argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 			&ntasks);	/* #processes in application */
 
-    maxRows = ceil(height/ntasks); //!< Sets the maximum number of rows per process
+    maxRows = ceil((double)height/(double)ntasks); //!< Sets the maximum number of rows per process
     //MPI_SCATTER(sendbuf, sendcount, sendtype, recvbuf, recvcount, 
      
                     //   recvtype, root, comm)
