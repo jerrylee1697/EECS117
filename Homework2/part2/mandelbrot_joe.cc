@@ -63,12 +63,11 @@ int main (int argc, char* argv[]) {
     int sendbuf[maxRows * width];   //!< Send buffer from every single process
     int sendbufRow = 0; //!< Keeps track of sendbuf indices
 
-    while (n < N - 1) { //!< Calculates up to pN + (N-1)
+    while (n < N) { //!< Calculates up to pN + (N-1)
         // Does entire row of p + nP
         y = minY + it * row;
         x = minX;
         for (int j = 0; j < width; ++j) {
-
             sendbuf[j + sendbufRow * width] = mandelbrot(x, y);
             x += jt;
         }
