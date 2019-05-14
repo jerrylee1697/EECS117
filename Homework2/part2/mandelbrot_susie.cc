@@ -105,7 +105,7 @@ int main (int argc, char* argv[]) {
         int i, j;
         int bufIndex = 0;
         for (i = 0; i < height; ++i) {
-            bufIndex = (i * maxRows * width) * ((ntasks-1) * maxRows * width);
+            bufIndex = (i * maxRows * width) % ((ntasks-1) * maxRows * width);
             for (j = 0; j < width; ++j) {
                 img_view(j, i) = render(recvbuf[bufIndex + j]/512.0);
             }
