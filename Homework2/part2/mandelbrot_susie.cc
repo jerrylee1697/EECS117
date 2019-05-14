@@ -6,7 +6,11 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <assert.h>
 #include <mpi.h>
+#include <math.h>
+
+#include "render.hh"
 
 int maxRows;    //!< Max number of rows per process
 
@@ -14,6 +18,8 @@ int mandelbrot(double x, double y);
 
 int main (int argc, char* argv[]) {
   /* Lucky you, you get to write MPI code */
+    int myrank, ntasks;
+
     double minX = -2.1;
     double maxX = 0.7;
     double minY = -1.25;
@@ -79,7 +85,7 @@ int main (int argc, char* argv[]) {
             recvbuf = (int *)malloc(width * maxRows * ntasks * sizeof(int));  //!< Receive buffer only by parent process
     }
 
-    MPI_GATHER(
+    MPI_Gather(
         sendbuf,
         maxRows * width, /* sendcount,*/
         MPI_INT,         /* sendtype,*/ 
@@ -94,14 +100,14 @@ int main (int argc, char* argv[]) {
         /*
  * Render all values
  */
-    gil::rgb8_image_t img(height, width);
-    auto img_view = gil::view(img);
+        gil::rgb8_image_t img(height, width);
+        auto img_view = gil::view(img);
         int i, j;
         int bufIndex = 0;
         for (i = 0; i < height; ++i) {
-            bufIndex = (i * maxRow * width) * ((ntasks-1) * maxRow * width);
+            bufIndex = (i * maxRows * width) * ((ntasks-1) * maxRows * width);
             for (j = 0; j < width; ++j) {
-                img_view(j, i) = render(recvbuf(bufIndex + j)/512.0);
+                img_view(j, i) = render(recvbuf[bufIndex + j]/512.0);
             }
         }
         gil::png_write_view("mandelbrot_susie.png", const_view(img));
