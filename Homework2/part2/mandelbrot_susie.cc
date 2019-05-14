@@ -70,7 +70,7 @@ int main (int argc, char* argv[]) {
             sendbuf[j + sendbufRow * width] = mandelbrot(x, y);
             x += jt;
         }
-        n++;
+        n++; 
         row = myrank + n * ntasks;
         // numberOfRows += 1;
         sendbufRow += 1;
@@ -105,9 +105,10 @@ int main (int argc, char* argv[]) {
         int i, j;
         int bufIndex = 0;
         for (i = 0; i < height; ++i) {
-            bufIndex = (i * maxRows * width) % ((ntasks-1) * maxRows * width);
+            // bufIndex = (i * maxRows * width) % ((ntasks-1) * maxRows * width);
+            bufIndex = (i * maxRows) % (ntasks - 1);
             for (j = 0; j < width; ++j) {
-                img_view(j, i) = render(recvbuf[bufIndex + j]/512.0);
+                img_view(j, i) = render(recvbuf[bufIndex * width + j]/512.0);
             }
         }
         gil::png_write_view("mandelbrot_susie.png", const_view(img));

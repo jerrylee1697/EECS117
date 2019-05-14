@@ -60,12 +60,11 @@ main(int argc, char* argv[]) {
   y = minY;
   for (int i = 0; i < height; ++i) {
     x = minX;
-    y = minY + it * i;
     for (int j = 0; j < width; ++j) {
       img_view(j, i) = render(mandelbrot(x, y)/512.0);
       x += jt;
     }
-    // y += it;
+    y += it;
   }
   gil::png_write_view("mandelbrot.png", const_view(img));
 }
