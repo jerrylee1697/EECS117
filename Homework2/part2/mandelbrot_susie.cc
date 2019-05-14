@@ -56,7 +56,7 @@ int main (int argc, char* argv[]) {
     // row to compute = p + nP for n = 0, 1, 2
     int n = 0;
     int row = myrank + n * ntasks;
-    int numberOfRows = 0;
+    // int numberOfRows = 0;
     // http://www.netlib.org/utk/papers/mpi-book/node98.html#SECTION00560000000000000000
     int sendbuf[maxRows * width];   //!< Send buffer from every single process
     int sendbufRow = 0; //!< Keeps track of sendbuf indices
@@ -72,7 +72,7 @@ int main (int argc, char* argv[]) {
         }
         n++;
         row = myrank + n * ntasks;
-        numberOfRows += 1;
+        // numberOfRows += 1;
         sendbufRow += 1;
     }
     // https://www.mpi-forum.org/docs/mpi-1.1/mpi-11-html/node70.html
