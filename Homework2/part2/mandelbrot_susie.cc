@@ -11,6 +11,7 @@
 #include <math.h>
 
 #include "render.hh"
+using namespace std;
 
 int maxRows;    //!< Max number of rows per process
 

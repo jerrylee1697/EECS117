@@ -1,7 +1,8 @@
 #!/bin/bash
 #$ -N Mandelbrot_MS
 #$ -q class
-#$ -pe one-node-mpi 8
+# #$ -pe one-node-mpi 8
+#$ -pe mpi 64
 #$ -R y
 #$ -ckpt restart
 
@@ -15,8 +16,8 @@
 module load boost/1.57.0
 
 # Module load OpenMPI
-# module load openmpi-1.8.3/gcc-4.9.2
-module load mpich-3.0.4/gcc-4.8.3
+module load openmpi-1.8.3/gcc-4.9.2
+# module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
 mpirun -np 8 ./mandelbrot_ms 1000 1000
