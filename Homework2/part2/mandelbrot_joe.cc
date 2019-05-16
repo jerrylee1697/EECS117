@@ -40,7 +40,7 @@ int main (int argc, char* argv[]) {
     double it = (maxY - minY)/height;
     double jt = (maxX - minX)/width;
     double x, y;
-
+    cout << "Before init\n";
 
     
     
