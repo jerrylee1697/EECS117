@@ -2,7 +2,7 @@
 #$ -N Mandelbrot_Joe
 #$ -q class
 # #$ -pe one-node-mpi 8
-#$ -pe mpi 16
+#$ -pe mpi 8
 #$ -R y
 #$ -ckpt restart
 
@@ -20,4 +20,4 @@ module load boost/1.57.0
 module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
-mpirun -np $CORES ./mandelbrot_joe 1000 1000
+mpirun -np 8 ./mandelbrot_joe 1000 1000

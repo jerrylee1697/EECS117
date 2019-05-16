@@ -2,7 +2,7 @@
 #$ -N Mandelbrot_MS
 #$ -q class
 # #$ -pe one-node-mpi 8
-#$ -pe mpi 64
+#$ -pe mpi 8
 #$ -R y
 #$ -ckpt restart
 
