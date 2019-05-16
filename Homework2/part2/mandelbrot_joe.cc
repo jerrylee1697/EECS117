@@ -41,6 +41,7 @@ int main (int argc, char* argv[]) {
     double jt = (maxX - minX)/width;
     double x, y;
     cout << "Before init\n";
+    cout << "nstasks1: " << ntasks << endl;
 
     
     
@@ -49,7 +50,7 @@ int main (int argc, char* argv[]) {
 			&myrank);	/* process rank, 0 thru N-1 */
     MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 			&ntasks);	/* #processes in application */
-
+    cout << "nstasks2: " << ntasks << endl;
     maxRows = ceil((double)height/(double)ntasks); //!< Sets the maximum number of rows per process
     int N = maxRows;   //!< # of rows per process
  
