@@ -98,8 +98,7 @@ int main (int argc, char* argv[]) {
         /*
  * Render all values
  */
-        t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
-        cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
+        
         gil::rgb8_image_t img(height, width);
         auto img_view = gil::view(img);
         int i, j;
@@ -112,6 +111,8 @@ int main (int argc, char* argv[]) {
             }
         }
         gil::png_write_view("mandelbrot_susie.png", const_view(img));
+        t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
+        cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
     }
 
 

@@ -185,8 +185,7 @@ void master() {
 	}
     // std::cout << "Finishes gathering "<< i_recv << ' ' << j_recv << std::endl;;
 
-    t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
-    cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
+    
 /*
  * Render all values
  */
@@ -196,6 +195,8 @@ void master() {
         }
     }
     gil::png_write_view("mandelbrot_ms.png", const_view(img));
+    t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
+    cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
 
 /*
  * Tell all the slaves to exit.
