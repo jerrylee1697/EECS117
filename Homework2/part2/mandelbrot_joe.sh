@@ -4,7 +4,6 @@
 # #$ -pe one-node-mpi 8
 #$ -pe mpi 8
 #$ -R y
-#$ -ckpt restart
 
 # Grid Engine Notes:
 # -----------------

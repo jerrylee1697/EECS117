@@ -3,7 +3,6 @@
 #$ -q class
 #$ -pe mpi 8
 #$ -R y
-#$ -ckpt restart
 
 # Grid Engine Notes:
 # -----------------
