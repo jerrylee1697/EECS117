@@ -1,6 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Joe
 #$ -q class
+# #$ -pe one-node-mpi 8
 #$ -pe mpi 8
 #$ -R y
 #$ -ckpt restart
@@ -15,6 +16,7 @@
 module load boost/1.57.0
 
 # Module load OpenMPI
+# module load openmpi-1.8.3/gcc-4.9.2
 module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
