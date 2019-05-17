@@ -51,7 +51,7 @@ int main (int argc, char* argv[]) {
 
 	int		myrank;
 
-    double t_start, t_elapsed;      /* Timer variables */
+    // double t_start, t_elapsed;      /* Timer variables */
 
 	MPI_Init(&argc, &argv);		/* initialize MPI */
 	MPI_Comm_rank(MPI_COMM_WORLD,	/* always use this */
