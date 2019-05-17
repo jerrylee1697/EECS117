@@ -40,31 +40,29 @@ int main (int argc, char* argv[]) {
     double it = (maxY - minY)/height;
     double jt = (maxX - minX)/width;
     double x, y;
-    cout << "Before init\n";
-    cout << "nstasks1: " << ntasks << endl;
 
-    
+
+    double t_start, t_elapsed;
+
     
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD,	/* always use this */
-			&myrank);	/* process rank, 0 thru N-1 */
+			&myrank);	            /* process rank, 0 thru N-1 */
     MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
-			&ntasks);	/* #processes in application */
-    cout << "nstasks2: " << ntasks << endl;
-    maxRows = ceil((double)height/(double)ntasks); //!< Sets the maximum number of rows per process
-    int N = maxRows;   //!< # of rows per process
+			&ntasks);	            /* #processes in application */
+    t_start = MPI_Wtime ();         /* Start timer */
+    maxRows = ceil((double)height/(double)ntasks); // Sets the maximum number of rows per process
+    int N = maxRows;   // # of rows per process
  
     // process p
     // P: processes
     // row to compute = pN, pN + 1, ... pN + (N-1)
-    int n = 0;  //!< index to add to pN
+    int n = 0;  // index to add to pN
     int row = myrank * N;
-    // int numberOfRows = 0;
-    // http://www.netlib.org/utk/papers/mpi-book/node98.html#SECTION00560000000000000000
-    int sendbuf[maxRows * width];   //!< Send buffer from every single process
-    int sendbufRow = 0; //!< Keeps track of sendbuf indices
+    int sendbuf[maxRows * width];   // Send buffer from every single process
+    int sendbufRow = 0; // Keeps track of sendbuf indices
 
-    while (n < N) { //!< Calculates up to pN + (N-1)
+    while (n < N) { // Calculates up to pN + (N-1)
         // Does entire row of p + nP
         y = minY + it * row;
         x = minX;
@@ -74,11 +72,9 @@ int main (int argc, char* argv[]) {
         }
         n++; 
         row = myrank * N + n;
-        // numberOfRows += 1;
         sendbufRow += 1;
     }
-    // https://www.mpi-forum.org/docs/mpi-1.1/mpi-11-html/node70.html
-    // https://www.mcs.anl.gov/research/projects/mpi/mpi-standard/mpi-report-1.1/node70.htm
+
     int *recvbuf;
 
     if (myrank == 0) {
@@ -101,7 +97,8 @@ int main (int argc, char* argv[]) {
     if (myrank == 0) {
         /*
  * Render all values
- */
+ */     t_elapsed = MPI_Wtime () - t_start;
+        cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
         gil::rgb8_image_t img(height, width);
         auto img_view = gil::view(img);
         int i, j;
