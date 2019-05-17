@@ -113,8 +113,8 @@ void master() {
             // values[j][i][3] = i;    //index i
             x += jt;
         }
-        values[i][width] = (double)i;   // Stores row into index at width
-        send_buf[width * 2] = (double)i;
+        // values[i][width] = (double)i;   // Stores row into index at width
+        send_buf[i][width * 2] = (double)i;
         y += it;
     }
 
