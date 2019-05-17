@@ -189,14 +189,15 @@ void master() {
 /*
  * Render all values
  */
+    t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
+    cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
+    
     for (i = 0; i < height; ++i) {
         for (j = 0; j < width; ++j) {
             img_view(j, i) = render(results[j][i]/512.0);
         }
     }
     gil::png_write_view("mandelbrot_ms.png", const_view(img));
-    t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
-    cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
 
 /*
  * Tell all the slaves to exit.
