@@ -98,10 +98,11 @@ void master() {
     int results[height][width];
     double send_buf[height][width * 2 + 1];
 
-    int sendcount = 0;
+    
     y = minY;
     for (int i = 0; i < height; ++i) {
         x = minX;
+        int sendcount = 0;
         for (int j = 0; j < width; ++j) {
             // rank = i * width + j;
             values[i][j][0] = x;
@@ -150,7 +151,7 @@ void master() {
     while (i < height) {
 
 		MPI_Recv(recv_buf,	/* message buffer */
-			width * 2 + 1,		        /* 3 data items: value, index j, index i */
+			width + 1,		        /* 3 data items: value, index j, index i */
 			MPI_INT,	    /* data item is a double real */
 			MPI_ANY_SOURCE,	/* receive from any sender */
 			MPI_ANY_TAG,	/* receive any type of message */
@@ -159,24 +160,15 @@ void master() {
         
 
         // [index j][index i]
-        i_recv = recv_buf[width * 2 + 1];   // Get row index
+        i_recv = recv_buf[width];   // Get row index
         for (int k = 0; k < width; k++) {
             results[i_recv][k] = recv_buf[k];
         }
-        results[i_recv][result[2]] = result[0];
+        // results[i_recv][result[2]] = result[0];
 
 		MPI_Send(send_buf[i], width * 2 + 1, MPI_DOUBLE, status.MPI_SOURCE,
 				WORKTAG, MPI_COMM_WORLD);
 
-        // j++;
-
-        // j_recv++;
-
-        // i = i + j/width;
-        // j = j % width;
-        
-        // i_recv = i_recv + j_recv / width;
-        // j_recv = j_recv % width;
         i++;
 	}
     // std::cout << "Exits while\n";
@@ -212,7 +204,7 @@ void master() {
     
     for (i = 0; i < height; ++i) {
         for (j = 0; j < width; ++j) {
-            img_view(j, i) = render(results[j][i]/512.0);
+            img_view(j, i) = render(results[i][j]/512.0);
         }
     }
     gil::png_write_view("mandelbrot_ms.png", const_view(img));
@@ -242,12 +234,12 @@ void slave() {
 		if (status.MPI_TAG == DIETAG) {
 			return;
 		}
-        double x = work[0];
-        double y = work[1];
+        // double x = work[0];
+        // double y = work[1];
 
-		result[0] = mandelbrot(x,y);
-        result[1] = (int)work[2];
-        result[2] = (int)work[3];
+		// result[0] = mandelbrot(x,y);
+        // result[1] = (int)work[2];
+        // result[2] = (int)work[3];
         int k = 0;
         for (int i = 0; i < width; ++i) {
             result[i] = mandelbrot(work[k], work[k+1]);
