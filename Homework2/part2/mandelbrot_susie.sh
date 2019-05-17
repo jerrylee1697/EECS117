@@ -1,8 +1,7 @@
 #!/bin/bash
 #$ -N Mandelbrot_Susie
 #$ -q class
-# #$ -pe one-node-mpi 8
-# -pe mpi 8
+#$ -pe mpi 8
 #$ -R y
 #$ -ckpt restart
 
