@@ -89,7 +89,7 @@ void master() {
 
 	MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 			&ntasks);	/* #processes in application */
-    // cout << "tasks: " << ntasks << endl;
+
 /*
  * Seed the slaves.
  */
@@ -110,11 +110,10 @@ void master() {
         y += it;
     }
 
-    int i = 0;
-    int j = 0;
+    int i = 0;  // Value counter Height
+    int j = 0;  // Value counter Width
 	for (rank = 1; rank < ntasks; ++rank) {
-        i = i + j/width;
-        j = j % width;
+        
 
 		// work = /* get_next_work_request */;
 
@@ -124,7 +123,11 @@ void master() {
 			rank,		/* destination process rank */
 			WORKTAG,	/* user chosen message tag */
 			MPI_COMM_WORLD);/* always use this */
+
         j++;
+
+        i = i + j/width;
+        j = j % width;
 	}
     // std::cout << "Enters while\n";
 /*
@@ -135,15 +138,8 @@ void master() {
     int i_recv = 0;
     int j_recv = 0;
 
-	while (i * width + j < width * height) {
-        // if (i + j/width > i) {
-            // std::cout << "i: " << i << std::endl;
-        // }
-        i = i + j/width;
-        j = j % width;
-        
-        i_recv = i_recv + j_recv / width;
-        j_recv = j_recv % width;
+	// while (i * width + j < width * height) {
+    while (i < height && j < width) {
 
 		MPI_Recv(&result,	/* message buffer */
 			1,		/* one data item */
@@ -153,25 +149,36 @@ void master() {
 			MPI_COMM_WORLD,	/* always use this */
 			&status);	/* info about received message */
         results[j_recv][i_recv] = result;
-        j_recv++;
 
 		MPI_Send(values[j][i], 2, MPI_DOUBLE, status.MPI_SOURCE,
 				WORKTAG, MPI_COMM_WORLD);
 
-		// work = /* get_next_work_request */;
         j++;
+
+        j_recv++;
+
+        i = i + j/width;
+        j = j % width;
+        
+        i_recv = i_recv + j_recv / width;
+        j_recv = j_recv % width;
 	}
     // std::cout << "Exits while\n";
 /*
  * Receive results for outstanding work requests.
  */
 	for (rank = 1; rank < ntasks; ++rank) {
-        i_recv = i_recv + j_recv/width;
-        j_recv = j_recv%width;
+        
+
 		MPI_Recv(&result, 1, MPI_INT, MPI_ANY_SOURCE,
 			    MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+
         results[j_recv][i_recv] = result;
+
         j_recv++;
+
+        i_recv = i_recv + j_recv / width;
+        j_recv = j_recv % width;
 	}
     // std::cout << "Finishes gathering "<< i_recv << ' ' << j_recv << std::endl;;
 
@@ -196,8 +203,8 @@ void master() {
 }
 
 void slave() {
-	int		result;
-	double		    work[2];
+	int		    result;
+	double		work[2];
 	MPI_Status	status;
 
 	for (;;) {
