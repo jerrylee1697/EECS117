@@ -42,7 +42,7 @@ int main (int argc, char* argv[]) {
     double x, y;
 
 
-    double t_start, t_elapsed;
+    double t_start, t_elapsed;      /* Timer variables */
 
     
     MPI_Init(&argc, &argv);
@@ -50,7 +50,9 @@ int main (int argc, char* argv[]) {
 			&myrank);	            /* process rank, 0 thru N-1 */
     MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
 			&ntasks);	            /* #processes in application */
+            
     t_start = MPI_Wtime ();         /* Start timer */
+
     maxRows = ceil((double)height/(double)ntasks); // Sets the maximum number of rows per process
     int N = maxRows;   // # of rows per process
  
@@ -97,7 +99,7 @@ int main (int argc, char* argv[]) {
     if (myrank == 0) {
         /*
  * Render all values
- */     t_elapsed = MPI_Wtime () - t_start;
+ */     t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
         cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
         gil::rgb8_image_t img(height, width);
         auto img_view = gil::view(img);

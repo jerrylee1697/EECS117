@@ -36,6 +36,7 @@ int mandelbrot(double x, double y);
 
 int height;
 int width;
+double t_start, t_elapsed;      /* Timer variables */
 
 int main (int argc, char* argv[]) {
     if (argc == 3) {
@@ -48,17 +49,15 @@ int main (int argc, char* argv[]) {
         return -1;
     }
 
-    // cout << "Height: " << height << endl;
-    // cout << "Width: " << width << endl;
-
 	int		myrank;
+
+    double t_start, t_elapsed;      /* Timer variables */
 
 	MPI_Init(&argc, &argv);		/* initialize MPI */
 	MPI_Comm_rank(MPI_COMM_WORLD,	/* always use this */
 			&myrank);	/* process rank, 0 thru N-1 */
-    // MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
-	// 		&ntasks);	/* #processes in application */
-    // cout << "my rank: " << myrank << endl;
+
+    t_start = MPI_Wtime ();         /* Start Timer */
     
 
 	if (myrank == 0) {
@@ -176,6 +175,8 @@ void master() {
 	}
     // std::cout << "Finishes gathering "<< i_recv << ' ' << j_recv << std::endl;;
 
+    t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
+    cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
 /*
  * Render all values
  */

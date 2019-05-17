@@ -20,4 +20,4 @@ module load boost/1.57.0
 module load mpich-3.0.4/gcc-4.8.3
 
 # Run the program 
-mpirun -n 8 ./mandelbrot_susie 1000 1000
+mpirun -n $CORES ./mandelbrot_susie 1000 1000

@@ -40,27 +40,25 @@ int main (int argc, char* argv[]) {
     double it = (maxY - minY)/height;
     double jt = (maxX - minX)/width;
     double x, y;
+
+    double t_start, t_elapsed;      /* Timer variables */
     
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD,	/* always use this */
-			&myrank);	/* process rank, 0 thru N-1 */
+			&myrank);	            /* process rank, 0 thru N-1 */
     MPI_Comm_size(MPI_COMM_WORLD,	/* always use this */
-			&ntasks);	/* #processes in application */
+			&ntasks);	            /* #processes in application */
+    t_start = MPI_Wtime ();         /* Start Timer */
 
-    maxRows = ceil((double)height/(double)ntasks); //!< Sets the maximum number of rows per process
-    //MPI_SCATTER(sendbuf, sendcount, sendtype, recvbuf, recvcount, 
-     
-                    //   recvtype, root, comm)
+    maxRows = ceil((double)height/(double)ntasks); // Sets the maximum number of rows per process
  
     // process p
     // P: processes
     // row to compute = p + nP for n = 0, 1, 2
     int n = 0;
     int row = myrank + n * ntasks;
-    // int numberOfRows = 0;
-    // http://www.netlib.org/utk/papers/mpi-book/node98.html#SECTION00560000000000000000
-    int sendbuf[maxRows * width];   //!< Send buffer from every single process
-    int sendbufRow = 0; //!< Keeps track of sendbuf indices
+    int sendbuf[maxRows * width];   // Send buffer from every single process
+    int sendbufRow = 0; // Keeps track of sendbuf indices
 
     while (row < height) {
         // Does entire row of p + nP
@@ -76,8 +74,7 @@ int main (int argc, char* argv[]) {
         // numberOfRows += 1;
         sendbufRow += 1;
     }
-    // https://www.mpi-forum.org/docs/mpi-1.1/mpi-11-html/node70.html
-    // https://www.mcs.anl.gov/research/projects/mpi/mpi-standard/mpi-report-1.1/node70.htm
+    
     int *recvbuf;
 
     if (myrank == 0) {
@@ -101,6 +98,8 @@ int main (int argc, char* argv[]) {
         /*
  * Render all values
  */
+        t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
+        cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
         gil::rgb8_image_t img(height, width);
         auto img_view = gil::view(img);
         int i, j;
