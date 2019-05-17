@@ -72,6 +72,7 @@ main(int argc, char* argv[]) {
   gil::png_write_view("mandelbrot.png", const_view(img));
   t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
   cout << " time: "<< t_elapsed << endl;
+  MPI_Finalize();
 }
 
 /* eof */
