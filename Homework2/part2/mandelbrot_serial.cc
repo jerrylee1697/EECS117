@@ -39,6 +39,7 @@ main(int argc, char* argv[]) {
   double maxY = 1.25;
   
   double t_start, t_elapsed;
+  MPI_Init(0, 0);
   t_start = MPI_Wtime ();
 
   int height, width;
