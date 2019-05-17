@@ -94,21 +94,27 @@ void master() {
  * Seed the slaves.
  */
     // height, width, {x,y} to be passed
-    double values[width][height][4];
-    int results[width][height];
+    double values[height][width+1][2];
+    int results[height][width];
+    double send_buf[height][width * 2 + 1];
 
+    int sendcount = 0;
     y = minY;
     for (int i = 0; i < height; ++i) {
         x = minX;
         for (int j = 0; j < width; ++j) {
             // rank = i * width + j;
-            values[j][i][0] = x;
-            values[j][i][1] = y;
-            values[j][i][2] = j;    //index j
-            values[j][i][3] = i;    //index i
-            results[j][i] = 0;
+            values[i][j][0] = x;
+            values[i][j][1] = y;
+            send_buf[i][sendcount] = x;
+            send_buf[i][sendcount + 1] = y;
+            sendcount += 2;
+            // values[j][i][2] = j;    //index j
+            // values[j][i][3] = i;    //index i
             x += jt;
         }
+        values[i][width] = (double)i;   // Stores row into index at width
+        send_buf[width * 2] = (double)i;
         y += it;
     }
 
@@ -119,17 +125,16 @@ void master() {
 
 		// work = /* get_next_work_request */;
 
-		MPI_Send(values[j][i],		/* message buffer */
-			4,		/* one data item */
+		MPI_Send(send_buf[i],		/* message buffer */
+			width * 2 + 1,		/* one data item */
 			MPI_DOUBLE,	/* data item is an integer */
 			rank,		/* destination process rank */
 			WORKTAG,	/* user chosen message tag */
 			MPI_COMM_WORLD);/* always use this */
 
-        j++;
-
-        i = i + j/width;
-        j = j % width;
+        // i = i + j/width;
+        // j = j % width;
+        i++;    // Increment Row
 	}
     // std::cout << "Enters while\n";
 /*
@@ -139,32 +144,40 @@ void master() {
 	// work = /* get_next_work_request */;
     int i_recv = 0;
     int j_recv = 0;
+    int recv_buf[width + 1];
 
 	// while (i * width + j < width * height) {
-    while (i < height && j < width) {
+    while (i < height) {
 
-		MPI_Recv(result,	/* message buffer */
-			3,		        /* 3 data items: value, index j, index i */
+		MPI_Recv(recv_buf,	/* message buffer */
+			width * 2 + 1,		        /* 3 data items: value, index j, index i */
 			MPI_INT,	    /* data item is a double real */
 			MPI_ANY_SOURCE,	/* receive from any sender */
 			MPI_ANY_TAG,	/* receive any type of message */
 			MPI_COMM_WORLD,	/* always use this */
 			&status);	    /* info about received message */
-            // [index j][index i]
-        results[result[1]][result[2]] = result[0];
+        
 
-		MPI_Send(values[j][i], 4, MPI_DOUBLE, status.MPI_SOURCE,
+        // [index j][index i]
+        i_recv = recv_buf[width * 2 + 1];   // Get row index
+        for (int k = 0; k < width; k++) {
+            results[i_recv][k] = recv_buf[k];
+        }
+        results[i_recv][result[2]] = result[0];
+
+		MPI_Send(send_buf[i], width * 2 + 1, MPI_DOUBLE, status.MPI_SOURCE,
 				WORKTAG, MPI_COMM_WORLD);
 
-        j++;
+        // j++;
 
-        j_recv++;
+        // j_recv++;
 
-        i = i + j/width;
-        j = j % width;
+        // i = i + j/width;
+        // j = j % width;
         
-        i_recv = i_recv + j_recv / width;
-        j_recv = j_recv % width;
+        // i_recv = i_recv + j_recv / width;
+        // j_recv = j_recv % width;
+        i++;
 	}
     // std::cout << "Exits while\n";
 /*
@@ -173,15 +186,20 @@ void master() {
 	for (rank = 1; rank < ntasks; ++rank) {
         
 
-		MPI_Recv(result, 3, MPI_INT, MPI_ANY_SOURCE,
+		MPI_Recv(recv_buf, width+1, MPI_INT, MPI_ANY_SOURCE,
 			    MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
-        results[result[1]][result[2]] = result[0];
+        i_recv = recv_buf[width];   // Get row index
+        for (int k = 0; k < width; k++) {
+            results[i_recv][k] = recv_buf[k];
+        }
+        // results[i_recv][result[2]] = result[0];
+        // results[result[1]][result[2]] = result[0];
 
-        j_recv++;
+        // j_recv++;
 
-        i_recv = i_recv + j_recv / width;
-        j_recv = j_recv % width;
+        // i_recv = i_recv + j_recv / width;
+        // j_recv = j_recv % width;
 	}
     // std::cout << "Finishes gathering "<< i_recv << ' ' << j_recv << std::endl;;
 
@@ -208,12 +226,12 @@ void master() {
 }
 
 void slave() {
-	int		    result[3];
-	double		work[4];
+	int		    result[width + 1];
+	double		work[width * 2 + 1];
 	MPI_Status	status;
 
 	for (;;) {
-		MPI_Recv(work, 4, MPI_DOUBLE, 0, MPI_ANY_TAG,
+		MPI_Recv(work, width * 2 + 1, MPI_DOUBLE, 0, MPI_ANY_TAG,
 				MPI_COMM_WORLD, &status);
         
         // std::cout << "Working on " << x << ' ' << y << std::endl;
@@ -230,8 +248,15 @@ void slave() {
 		result[0] = mandelbrot(x,y);
         result[1] = (int)work[2];
         result[2] = (int)work[3];
+        int k = 0;
+        for (int i = 0; i < width; ++i) {
+            result[i] = mandelbrot(work[k], work[k+1]);
+            k += 2;
+        }
+        result[width] = work[width * 2];
 
-		MPI_Send(result, 3, MPI_INT, 0, 0, MPI_COMM_WORLD);
+
+		MPI_Send(result, width + 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 	}
 }
 
