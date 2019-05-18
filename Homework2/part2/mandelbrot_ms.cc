@@ -200,6 +200,7 @@ void master() {
  * Render all values
  */
     t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
+    cout << "Height: " << height << " Width: " << width << endl;
     cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
     
     for (i = 0; i < height; ++i) {

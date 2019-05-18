@@ -99,6 +99,7 @@ int main (int argc, char* argv[]) {
  * Render all values
  */
         t_elapsed = MPI_Wtime () - t_start;         /* Get end time */
+        cout << "Height: " << height << " Width: " << width << endl;
         cout << "ntasks: " << ntasks << " time: "<< t_elapsed << endl;
 
         gil::rgb8_image_t img(height, width);
