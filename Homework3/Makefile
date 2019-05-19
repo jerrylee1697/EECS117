@@ -19,6 +19,9 @@ stride$(EXEEXT): stride.cu $(SRCS_COMMON)
 sequential$(EXEEXT): sequential.cu $(SRCS_COMMON)
 	$(NVCC) -o $@ sequential.cu $(SRCS_COMMON)
 
+first_add$(EXEEXT): first_add.cu $(SRCS_COMMON)
+	$(NVCC) -o $@ first_add.cu $(SRCS_COMMON)
+
 clean:
 	rm -f $(TARGETS) 
 
