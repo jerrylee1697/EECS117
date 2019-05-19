@@ -2,7 +2,7 @@
 
 NVCC = nvcc
 
-TARGETS = naive$(EXEEXT) stride$(EXEEXT) sequential$(EXEEXT)
+TARGETS = naive$(EXEEXT) stride$(EXEEXT) sequential$(EXEEXT) first_add$(EXEEXT)
 
 all: $(TARGETS)
 
