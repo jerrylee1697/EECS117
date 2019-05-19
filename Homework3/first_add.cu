@@ -69,7 +69,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	// Cuts down threads used by half
     if(i < n) {
-        scratch[threadIdx.x] = input[i] + input[i + MAX_THREADS/2]; 
+        scratch[threadIdx.x] = g_idata[i] + g_idata[i + MAX_THREADS/2]; 
     } else {
         scratch[threadIdx.x] = 0;
     }
@@ -86,7 +86,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
     }
 
     if(threadIdx.x == 0) {
-        output[bid] = scratch[0];
+        g_odata[bid] = scratch[0];
     }
 }
 
