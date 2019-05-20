@@ -78,8 +78,8 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	// One less stride 
     for(unsigned int s = 1; s < blockDim.x - 1; s = s << 1) {
         // Modify Here
-        if(threadIdx.x < (MAX_THREADS / (2 * s))) {
-            scratch[threadIdx.x] += scratch[MAX_THREADS / (2 * s) + threadIdx.x];
+        if(threadIdx.x < (MAX_THREADS / (4 * s))) {
+            scratch[threadIdx.x] += scratch[MAX_THREADS / (4 * s) + threadIdx.x];
         }
         // -----------------
         __syncthreads ();

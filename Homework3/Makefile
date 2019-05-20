@@ -25,4 +25,9 @@ first_add$(EXEEXT): first_add.cu $(SRCS_COMMON)
 clean:
 	rm -f $(TARGETS) 
 
+clean_output:
+	rm FIRST_ADD.o*
+	rm REDUCE.o*
+	rm REDUCE_SEQ.o*
+	rm REDUCE_STRIDE.o*
 # eof
