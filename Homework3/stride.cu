@@ -75,9 +75,10 @@ kernel1(dtype *input, dtype *output, unsigned int n)
     }
     __syncthreads ();
 
-    for(unsigned int s = 1; s < blockDim.x; s = s << 1) {
+    // for(unsigned int s = 1; s < blockDim.x; s = s << 1) {
+    for(unsigned int s = blockDim.x/2; s > 0; s = s >> 1) {
         // Modify Here
-        if(threadIdx.x < (MAX_THREADS / (2 * s))) {
+        if(threadIdx.x < s) {
             int index = threadIdx.x * 2 * s;
             scratch[index] += scratch[index + s];
         }
