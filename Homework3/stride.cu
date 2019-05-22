@@ -81,7 +81,7 @@ kernel1(dtype *input, dtype *output, unsigned int n)
         // Modify Here
         if(threadIdx.x < s) {
             int index = threadIdx.x * 2 * k;
-            scratch[index] += scratch[index + s];
+            scratch[index] += scratch[index + k];
         }
         // -----------------
         __syncthreads ();
