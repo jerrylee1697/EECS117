@@ -67,19 +67,22 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
     unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
     unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
 
+	unsigned int half = blockDim.x/2;
 	// Cuts down threads used by half
     if(i < n) {
-        scratch[threadIdx.x] = g_idata[i] + g_idata[i + MAX_THREADS/2]; 
+        scratch[threadIdx.x] = g_idata[i] + g_idata[i + half]; 
     } else {
         scratch[threadIdx.x] = 0;
     }
     __syncthreads ();
 
 	// One less stride 
-    for(unsigned int s = 1; s < blockDim.x - 1; s = s << 1) {
+    // for(unsigned int s = 1; s < blockDim.x; s = s << 1) {
+	for(unsigned int s = blockDim.x / 4; s > 0; s = s >> 1) {
         // Modify Here
-        if(threadIdx.x < (MAX_THREADS / (4 * s))) {
-            scratch[threadIdx.x] += scratch[MAX_THREADS / (4 * s) + threadIdx.x];
+        if (threadIdx.x < s) {
+            // scratch[threadIdx.x] += scratch[MAX_THREADS / (2 * s) + threadIdx.x];
+            scratch[threadIdx.x] += scratch[s + threadIdx.x];
         }
         // -----------------
         __syncthreads ();
