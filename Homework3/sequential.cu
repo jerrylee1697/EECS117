@@ -75,7 +75,7 @@ kernel2 (dtype *input, dtype *output, unsigned int n)
 
     // unsigned int k = MAX_THREADS / 2;
     // for(unsigned int s = 1; s < blockDim.x; s = s << 1) {
-      for(unsigned int s = MAX_THREADS/2; s > 0; s = s >> 1) {
+      for(unsigned int s = blockDim.x/2; s > 0; s = s >> 1) {
         // Modify Here
         // if(threadIdx.x < (MAX_THREADS / (2 * s))) {
         if (threadIdx.x < s) {
