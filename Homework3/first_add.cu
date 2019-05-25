@@ -7,7 +7,7 @@
 typedef float dtype;
 
 #define N_ (8 * 1024 * 1024)
-#define MAX_THREADS (256 / 2)
+#define MAX_THREADS 256
 #define MAX_BLOCKS 64
 
 #define MIN(x,y) ((x < y) ? x : y)

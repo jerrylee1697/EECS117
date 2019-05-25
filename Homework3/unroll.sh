@@ -1,5 +1,5 @@
 #!/bin/bash
-#$ -N FIRST_ADD
+#$ -N UNROLL
 #$ -q gpu
 #$ -l gpu=1
 #$ -pe gpu-node-cores 6
@@ -39,10 +39,10 @@ echo "Node:" `hostname`
 echo "Current directory: ${PWD}"
 
 echo ""
-echo "=== Running 5 trials of first add ... ==="
+echo "=== Running 5 trials of unroll ... ==="
 for trial in 1 2 3 4 5; do
   echo "*** Trial ${trial} ***"
-  ./first_add
+  ./unroll
 done
 
 echo ""

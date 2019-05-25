@@ -2,7 +2,7 @@
 
 NVCC = nvcc
 
-TARGETS = naive$(EXEEXT) stride$(EXEEXT) sequential$(EXEEXT) first_add$(EXEEXT)
+TARGETS = naive$(EXEEXT) stride$(EXEEXT) sequential$(EXEEXT) first_add$(EXEEXT) unroll$(EXEEXT)
 
 all: $(TARGETS)
 
@@ -21,6 +21,9 @@ sequential$(EXEEXT): sequential.cu $(SRCS_COMMON)
 
 first_add$(EXEEXT): first_add.cu $(SRCS_COMMON)
 	$(NVCC) -o $@ first_add.cu $(SRCS_COMMON)
+
+unroll$(EXEEXT): unroll.cu $(SRCS_COMMON)
+	$(NVCC) -o $@ unroll.cu $(SRCS_COMMON)
 
 clean:
 	rm -f $(TARGETS) 
