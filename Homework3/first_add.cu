@@ -67,9 +67,9 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
     unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
     unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
 
-	unsigned int half = blockDim.x/2;
+	unsigned int half = MAX_THREADS/2;
 	// Cuts down threads used by half
-    if(i < n && threadIdx.x < MAX_THREADS/2 ) {
+    if(i + half < n && threadIdx.x < half ) {
         scratch[threadIdx.x] = g_idata[i] + g_idata[i + half]; 
     } else if (threadIdx.x < half) {
         scratch[threadIdx.x] = 0;
