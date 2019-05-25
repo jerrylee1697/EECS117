@@ -7,7 +7,7 @@
 typedef float dtype;
 
 #define N_ (8 * 1024 * 1024)
-#define MAX_THREADS 256
+#define MAX_THREADS (256/2)
 #define MAX_BLOCKS 64
 
 #define MIN(x,y) ((x < y) ? x : y)
@@ -69,7 +69,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	unsigned int half = blockDim.x/2;
 	// Cuts down threads used by half
-    if(i < n/2) {
+    if(i + half < n) {
         scratch[threadIdx.x] = g_idata[i] + g_idata[i + half]; 
     } else {
         scratch[threadIdx.x] = 0;
