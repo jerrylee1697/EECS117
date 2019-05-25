@@ -65,14 +65,14 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	// int size = MAX_THREADS/2;
 	__shared__  dtype scratch[MAX_THREADS];
 
-    unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x * 2;
+    unsigned int bid = (gridDim.x * blockIdx.y + blockIdx.x) * 2;
     unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
 
 	// Cuts down threads used by half
     if(i + MAX_THREADS < n) {
         scratch[threadIdx.x] = g_idata[i] + g_idata[i + MAX_THREADS]; 
     } else {
-        scratch[threadIdx.x] = 0;
+       scratch[threadIdx.x] = 0;
 	}
     __syncthreads ();
 
