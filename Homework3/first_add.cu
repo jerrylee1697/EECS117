@@ -62,38 +62,56 @@ dtype reduce_cpu(dtype *data, int n) {
 __global__ void
 kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
-	__shared__  dtype scratch[MAX_THREADS];
+    __shared__  dtype scratch[MAX_THREADS];
 
     unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
-    unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
+    unsigned int i = bid * blockDim.x + threadIdx.x;
 
-	// unsigned int half = MAX_THREADS/2;
-	// // Cuts down threads used by half
-    // if(i + half < n && threadIdx.x < half ) {
-    //     scratch[threadIdx.x] = g_idata[i] + g_idata[i + half]; 
-    // } else if (threadIdx.x < half) {
-    //     scratch[threadIdx.x] = 0;
-	// }
-	if(i < n) {
+    if(i < n) {
         scratch[threadIdx.x] = g_idata[i]; 
     } else {
         scratch[threadIdx.x] = 0;
     }
     __syncthreads ();
 
-	// One less stride 
-	for(unsigned int s = blockDim.x / 2; s > 0; s = s >> 1) {
-        // Modify Here
+      for(unsigned int s = blockDim.x/2; s > 0; s = s >> 1) {
         if (threadIdx.x < s) {
             scratch[threadIdx.x] += scratch[s + threadIdx.x];
         }
-        // -----------------
         __syncthreads ();
     }
 
     if(threadIdx.x == 0) {
-        g_odata[bid] = scratch[0];
+        output[bid] = scratch[0];
     }
+	// int size = MAX_THREADS/2;
+	// __shared__  dtype scratch[size];
+
+    // unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
+    // unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
+
+	// unsigned int half = blockDim.x / 2;
+	// // Cuts down threads used by half
+    // if(i + half < n && threadIdx.x < size) {
+    //     scratch[threadIdx.x] = g_idata[i] + g_idata[i + half]; 
+    // } else if (threadIdx.x < size) {
+    //     scratch[threadIdx.x] = 0;
+	// }
+    // __syncthreads ();
+
+	// // One less stride 
+	// for(unsigned int s = blockDim.x / 4; s > 0; s = s >> 1) {
+    //     // Modify Here
+    //     if (threadIdx.x < s) {
+    //         scratch[threadIdx.x] += scratch[s + threadIdx.x];
+    //     }
+    //     // -----------------
+    //     __syncthreads ();
+    // }
+
+    // if(threadIdx.x == 0) {
+    //     g_odata[bid] = scratch[0];
+    // }
 }
 
 
