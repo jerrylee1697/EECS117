@@ -65,7 +65,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	// int size = MAX_THREADS/2;
 	__shared__  dtype scratch[MAX_THREADS];
 
-    unsigned int bid = (gridDim.x * blockIdx.y + blockIdx.x) * 2;
+    unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
     unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
 
 	// Cuts down threads used by half
