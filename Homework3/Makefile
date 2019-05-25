@@ -28,13 +28,4 @@ unroll$(EXEEXT): unroll.cu $(SRCS_COMMON)
 clean:
 	rm -f $(TARGETS) 
 
-clean_output:
-	rm FIRST_ADD.o*
-	rm REDUCE.o*
-	rm REDUCE_SEQ.o*
-	rm REDUCE_STRIDE.o*
-	rm FIRST_ADD.e*
-	rm REDUCE.e*
-	rm REDUCE_SEQ.e*
-	rm REDUCE_STRIDE.e*
 # eof

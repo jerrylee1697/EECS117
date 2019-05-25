@@ -62,14 +62,14 @@ dtype reduce_cpu(dtype *data, int n) {
 __global__ void
 kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
-	__shared__  dtype scratch[MAX_THREADS/2];
+	__shared__  dtype scratch[MAX_THREADS];
 
     unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
     unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
 
 	unsigned int half = blockDim.x/2;
 	// Cuts down threads used by half
-    if(i < n) {
+    if(i < n/2) {
         scratch[threadIdx.x] = g_idata[i] + g_idata[i + half]; 
     } else {
         scratch[threadIdx.x] = 0;
