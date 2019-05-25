@@ -69,7 +69,7 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 	unsigned int half = blockDim.x/2;
 	// Cuts down threads used by half
-    if(i < n) {
+    if(i < n/2) {
         scratch[threadIdx.x] = g_idata[i] + g_idata[i + half]; 
     } else {
         scratch[threadIdx.x] = 0;
