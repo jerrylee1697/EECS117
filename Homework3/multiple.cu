@@ -72,9 +72,9 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	// if(i < n) {
 	// 	scratch[threadIdx.x] = g_idata[i] + g_idata[i + blockDim.x]; 
 	scratch[threadIdx.x] = 0;
-		for (unsigned int k = 0; k < n / MAX_THREADS && i + blockDim.x * k < n; ++k) {
-			scratch[threadIdx.x] += g_idata[i + blockDim.x * k]; 
-		}
+	for (unsigned int k = 0; k < n / (MAX_THREADS * MAX_BLOCKS) && i + blockDim.x * k < n; ++k) {
+		scratch[threadIdx.x] += g_idata[i + blockDim.x * k]; 
+	}
 	// }
 	// else {
 	// 	scratch[threadIdx.x] = 0;
