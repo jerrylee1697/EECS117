@@ -69,8 +69,8 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
     unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
 	// unsigned int half = blockDim.x/2;
 	// Cuts down threads used by half
-    if(i + blockDim.x < n) {
-        scratch[threadIdx.x] = g_idata[i] + g_idata[i + blockDim.x]; 
+    if(i + MAX_THREADS < n) {
+        scratch[threadIdx.x] = g_idata[i] + g_idata[i + MAX_THREADS]; 
     } else {
        scratch[threadIdx.x] = 0;
 	}
@@ -88,7 +88,29 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 
     if(threadIdx.x == 0) {
         g_odata[bid] = scratch[0];
-    }
+	}
+	// __shared__  dtype scratch[MAX_THREADS];
+
+    // unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
+    // unsigned int i = bid * blockDim.x + threadIdx.x;
+
+    // if(i < n) {
+    //     scratch[threadIdx.x] = input[i]; 
+    // } else {
+    //     scratch[threadIdx.x] = 0;
+    // }
+    // __syncthreads ();
+
+    //   for(unsigned int s = blockDim.x/2; s > 0; s = s >> 1) {
+    //     if (threadIdx.x < s) {
+    //         scratch[threadIdx.x] += scratch[s + threadIdx.x];
+    //     }
+    //     __syncthreads ();
+    // }
+
+    // if(threadIdx.x == 0) {
+    //     output[bid] = scratch[0];
+    // }
 }
 
 
