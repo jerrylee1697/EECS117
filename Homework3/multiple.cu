@@ -62,6 +62,67 @@ dtype reduce_cpu(dtype *data, int n) {
 __global__ void
 kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
+	// int size = MAX_THREADS/2;
+	__shared__  dtype scratch[MAX_THREADS];
+
+	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
+	unsigned int i = bid * blockDim.x * 2 + threadIdx.x;	// Global Thread ID
+	// unsigned int half = blockDim.x/2;
+	// Cuts down threads used by half
+	// if(i < n) {
+	// 	scratch[threadIdx.x] = g_idata[i] + g_idata[i + blockDim.x]; 
+		for (unsigned int k = 0; k < n / MAX_THREADS && i + blockDim.x * k < n; ++k) {
+			scratch[threadIdx.x] += g_idata[i + blockDim.x * k]; 
+		}
+	// }
+	 else {
+		scratch[threadIdx.x] = 0;
+	}
+	__syncthreads ();
+
+	// One less stride 
+	unsigned int s;
+	for(s = blockDim.x / 2; s > 32; s = s >> 1) {
+		// Modify Here
+		if (threadIdx.x < s) {
+			scratch[threadIdx.x] += scratch[s + threadIdx.x];
+		}
+		// -----------------
+		__syncthreads ();
+	}
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+
+	if(threadIdx.x == 0) {
+		g_odata[bid] = scratch[0];
+	}
 }
 
 
