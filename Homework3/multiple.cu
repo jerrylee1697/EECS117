@@ -69,18 +69,15 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	// increments i by thread * elements calculated per block
 	// elements / (threads per block * blocks)
 	unsigned int i = bid * (n / gridDim.x) + threadIdx.x;	// Global Thread ID
-	// unsigned int half = blockDim.x/2;
-	// Cuts down threads used by half
-	// if(i < n) {
-	// 	scratch[threadIdx.x] = g_idata[i] + g_idata[i + blockDim.x]; 
-	scratch[threadIdx.x] = 0;
+
+	dtype sum = 0;
+
+	// scratch[threadIdx.x] = 0;
 	for (unsigned int k = 0; k < n / (gridDim.x * blockDim.x) && i + blockDim.x * k < n; ++k) {
-		scratch[threadIdx.x] += g_idata[i + blockDim.x * k]; 
+		sum += g_idata[i + blockDim.x * k]; 
 	}
-	// }
-	// else {
-	// 	scratch[threadIdx.x] = 0;
-	// }
+	scratch[threadIdx.x] = sum;
+
 	__syncthreads ();
 
 	// One less stride 
