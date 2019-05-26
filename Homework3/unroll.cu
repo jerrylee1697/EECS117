@@ -62,35 +62,58 @@ dtype reduce_cpu(dtype *data, int n) {
 __global__ void
 kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
-	__shared__  dtype scratch[MAX_THREADS/2];
+	// int size = MAX_THREADS/2;
+	__shared__  dtype scratch[MAX_THREADS];
 
     unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
-    unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
-
-	unsigned int half = blockDim.x/2;
+    unsigned int i = bid * blockDim.x * 2 + threadIdx.x;	// Global Thread ID
+	// unsigned int half = blockDim.x/2;
 	// Cuts down threads used by half
-    if(i < n) {
-        scratch[threadIdx.x] = g_idata[i] + g_idata[i + half]; 
+    if(i + blockDim.x < n) {
+        scratch[threadIdx.x] = g_idata[i] + g_idata[i + blockDim.x]; 
     } else {
-        scratch[threadIdx.x] = 0;
-    }
+       scratch[threadIdx.x] = 0;
+	}
     __syncthreads ();
 
 	// One less stride 
-	for(unsigned int s = blockDim.x / 4; s > 32; s = s >> 1) {
+	unsigned int s;
+	for(s = blockDim.x / 2; s > 32; s = s >> 1) {
         // Modify Here
         if (threadIdx.x < s) {
             scratch[threadIdx.x] += scratch[s + threadIdx.x];
         }
         // -----------------
         __syncthreads ();
+    }
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
 	}
-	scratch[threadIdx.x] += scratch[32 + threadIdx.x];
-	scratch[threadIdx.x] += scratch[16 + threadIdx.x];
-	scratch[threadIdx.x] += scratch[8 + threadIdx.x];
-	scratch[threadIdx.x] += scratch[4 + threadIdx.x];
-	scratch[threadIdx.x] += scratch[2 + threadIdx.x];
-	scratch[threadIdx.x] += scratch[1 + threadIdx.x];
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
+	__syncthreads ();
+	s = s >> 1;
+	if (threadIdx.x < s) {
+		scratch[threadIdx.x] += scratch[s + threadIdx.x];
+	}
 	__syncthreads ();
 
     if(threadIdx.x == 0) {
