@@ -66,11 +66,11 @@ kernel3(dtype *g_idata, dtype *g_odata, unsigned int n)
 	__shared__  dtype scratch[MAX_THREADS];
 
     unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
-    unsigned int i = bid * blockDim.x + threadIdx.x;	// Global Thread ID
+    unsigned int i = bid * blockDim.x * 2 + threadIdx.x;	// Global Thread ID
 	// unsigned int half = blockDim.x/2;
 	// Cuts down threads used by half
-    if(i + MAX_THREADS < n) {
-        scratch[threadIdx.x] = g_idata[i] + g_idata[i + MAX_THREADS]; 
+    if(i + blockDim.x < n) {
+        scratch[threadIdx.x] = g_idata[i] + g_idata[i + blockDim.x]; 
     } else {
        scratch[threadIdx.x] = 0;
 	}
