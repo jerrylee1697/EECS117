@@ -66,13 +66,15 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 	__shared__  dtype scratch[MAX_THREADS];
 
 	unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
-	unsigned int i = bid * blockDim.x * (n / (MAX_THREADS * MAX_BLOCKS)) + threadIdx.x;	// Global Thread ID
+	// increments i by thread * elements calculated per block
+	// elements / (threads per block * blocks)
+	unsigned int i = bid * (n / gridDim.x) + threadIdx.x;	// Global Thread ID
 	// unsigned int half = blockDim.x/2;
 	// Cuts down threads used by half
 	// if(i < n) {
 	// 	scratch[threadIdx.x] = g_idata[i] + g_idata[i + blockDim.x]; 
 	scratch[threadIdx.x] = 0;
-	for (unsigned int k = 0; k < n / (MAX_THREADS * MAX_BLOCKS) && i + blockDim.x * k < n; ++k) {
+	for (unsigned int k = 0; k < n / (gridDim.x * blockDim.x) && i + blockDim.x * k < n; ++k) {
 		scratch[threadIdx.x] += g_idata[i + blockDim.x * k]; 
 	}
 	// }
