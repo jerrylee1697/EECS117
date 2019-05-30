@@ -89,32 +89,32 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
 	}
-	__syncthreads ();
+	// __syncthreads ();
 	s = s >> 1;
 	if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
 	}
-	__syncthreads ();
+	// __syncthreads ();
 	s = s >> 1;
 	if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
 	}
-	__syncthreads ();
+	// __syncthreads ();
 	s = s >> 1;
 	if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
 	}
-	__syncthreads ();
+	// __syncthreads ();
 	s = s >> 1;
 	if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
 	}
-	__syncthreads ();
+	// __syncthreads ();
 	s = s >> 1;
 	if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
 	}
-	__syncthreads ();
+	// __syncthreads ();
 
     if(threadIdx.x == 0) {
         g_odata[bid] = scratch[0];
