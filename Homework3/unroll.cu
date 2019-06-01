@@ -86,34 +86,34 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
         // -----------------
         __syncthreads ();
     }
-	if (threadIdx.x < s) {
+	// if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
-	}
+	// }
 	// __syncthreads ();
 	s = s >> 1;
-	if (threadIdx.x < s) {
+	// if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
-	}
+	// }
 	// __syncthreads ();
 	s = s >> 1;
-	if (threadIdx.x < s) {
+	// if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
-	}
+	// }
 	// __syncthreads ();
 	s = s >> 1;
-	if (threadIdx.x < s) {
+	// if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
-	}
+	// }
 	// __syncthreads ();
 	s = s >> 1;
-	if (threadIdx.x < s) {
+	// if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
-	}
+	// }
 	// __syncthreads ();
 	s = s >> 1;
-	if (threadIdx.x < s) {
+	// if (threadIdx.x < s) {
 		scratch[threadIdx.x] += scratch[s + threadIdx.x];
-	}
+	// }
 	// __syncthreads ();
 
     if(threadIdx.x == 0) {
