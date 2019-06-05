@@ -42,7 +42,7 @@ echo ""
 echo "=== Running 5 trials of transpose ... ==="
 for trial in 1 2 3 4 5; do
   echo "*** Trial ${trial} ***"
-  ./transpose
+  ./transpose 100000
 done
 
 echo ""
