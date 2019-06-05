@@ -113,6 +113,8 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     fprintf (stderr, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
            t_gpu, (N * N) / t_gpu * 1e-9 );
 
+    cudaFree(idata);
+    cudaFree(tdata);
 }
 
 int 
