@@ -10,7 +10,23 @@ typedef float dtype;
 __global__ 
 void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
-
+    __shared__ float tile[32][32];
+    
+    int x = blockIdx.x * 32 + threadIdx.x;
+    int y = blockIdx.y * 32 + threadIdx.y;
+    int width = gridDim.x * 32;
+  
+    for (int j = 0; j < 32; j += 8)
+       tile[threadIdx.y+j][threadIdx.x] = A[(y+j)*width + x];
+  
+    __syncthreads();
+  
+    x = blockIdx.y * 32 + threadIdx.x;  // transpose block offset
+    y = blockIdx.x * 32 + threadIdx.y;
+  
+    for (int j = 0; j < 32; j += 8) {
+       AT[(y+j)*width + x] = tile[threadIdx.x][threadIdx.y + j];
+    }
 }
 
 void
@@ -66,20 +82,30 @@ cmpArr (dtype* a, dtype* b, int N)
 void
 gpuTranspose (dtype* A, dtype* AT, int N)
 {
-  struct stopwatch_t* timer = NULL;
-  long double t_gpu;
+    struct stopwatch_t* timer = NULL;
+    long double t_gpu;
 
-	
-  /* Setup timers */
-  stopwatch_init ();
-  timer = stopwatch_create ();
+        
+    /* Setup timers */
+    stopwatch_init ();
+    timer = stopwatch_create ();
 
-  stopwatch_start (timer);
-	/* run your kernel here */
+    /* Cuda malloc*/
+    dtype *idata, *tdata;
+    cudaMalloc(idata, N * N * sizeof (dtype));
+    cudaMemcpy(idata, A, N * N * sizeof (dtype), cudaMemcpyHostToDevice);
+    cudaMalloc(tdata, N * N * sizeof (dtype));
 
-  cudaThreadSynchronize ();
-  t_gpu = stopwatch_stop (timer);
-  fprintf (stderr, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
+    stopwatch_start (timer);
+    /* run your kernel here */
+    matTrans<<<dimGrid, dimBlock>>>(tdata, idata, N);
+
+    cudaMemcpy(AT, tdata, N * N * sizeof (dtype), cudaMemcpyDeviceToHost)
+    // for (int i = 0; )
+
+    cudaThreadSynchronize ();
+    t_gpu = stopwatch_stop (timer);
+    fprintf (stderr, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
            t_gpu, (N * N) / t_gpu * 1e-9 );
 
 }
