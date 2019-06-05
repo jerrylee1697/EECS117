@@ -2,7 +2,7 @@
 
 NVCC = nvcc
 
-TARGETS = naive$(EXEEXT) stride$(EXEEXT) sequential$(EXEEXT) first_add$(EXEEXT) unroll$(EXEEXT) multiple$(EXEEXT)
+TARGETS = naive$(EXEEXT) stride$(EXEEXT) sequential$(EXEEXT) first_add$(EXEEXT) unroll$(EXEEXT) multiple$(EXEEXT) transpose$(EXEEXT)
 
 all: $(TARGETS)
 
@@ -28,6 +28,8 @@ unroll$(EXEEXT): unroll.cu $(SRCS_COMMON)
 multiple$(EXEEXT): multiple.cu $(SRCS_COMMON)
 	$(NVCC) -o $@ multiple.cu $(SRCS_COMMON)
 
+transpose$(EXEEXT): transpose.cu $(SRS_COMMON)
+	$(NVCC) -o $@ transpose.cu $(SRCS_COMMON)
 clean:
 	rm -f $(TARGETS) 
 

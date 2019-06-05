@@ -85,26 +85,28 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     struct stopwatch_t* timer = NULL;
     long double t_gpu;
 
-        
-    /* Setup timers */
-    stopwatch_init ();
-    timer = stopwatch_create ();
-
     /* Cuda malloc*/
     dtype *idata, *tdata;
     cudaMalloc(idata, N * N * sizeof (dtype));
     cudaMemcpy(idata, A, N * N * sizeof (dtype), cudaMemcpyHostToDevice);
     cudaMalloc(tdata, N * N * sizeof (dtype));
 
+    /* Setup timers */
+    stopwatch_init ();
+    timer = stopwatch_create ();
+
     stopwatch_start (timer);
     /* run your kernel here */
     matTrans<<<dimGrid, dimBlock>>>(tdata, idata, N);
 
-    cudaMemcpy(AT, tdata, N * N * sizeof (dtype), cudaMemcpyDeviceToHost)
-    // for (int i = 0; )
+    
+  
 
     cudaThreadSynchronize ();
     t_gpu = stopwatch_stop (timer);
+
+    cudaMemcpy(AT, tdata, N * N * sizeof (dtype), cudaMemcpyDeviceToHost);
+    
     fprintf (stderr, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
            t_gpu, (N * N) / t_gpu * 1e-9 );
 
