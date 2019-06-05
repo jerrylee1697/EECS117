@@ -87,13 +87,14 @@ gpuTranspose (dtype* A, dtype* AT, int N)
 
     dim3 dimGrid(N/32, N/32, 1);
     dim3 dimBlock(32, 8, 1);
-
+    std::cout << "Finish dim3s\n";
     /* Cuda malloc*/
     dtype *idata, *tdata;
     cudaMalloc(&idata, N * N * sizeof (dtype));
     cudaMemcpy(idata, A, N * N * sizeof (dtype), cudaMemcpyHostToDevice);
+    std::cout << "Finish GPU Mallocs\n";
     cudaMalloc(&tdata, N * N * sizeof (dtype));
-
+    std::cout << "Finish Memcopy1\n";
     /* Setup timers */
     stopwatch_init ();
     timer = stopwatch_create ();
@@ -101,20 +102,19 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     stopwatch_start (timer);
     /* run your kernel here */
     matTrans<<<dimGrid, dimBlock>>>(tdata, idata, N);
-
-    
   
-
     cudaThreadSynchronize ();
     t_gpu = stopwatch_stop (timer);
-
+    std::cout << "Finish matrix Trans\n";
     cudaMemcpy(AT, tdata, N * N * sizeof (dtype), cudaMemcpyDeviceToHost);
 
+    std::cout << "Finish Memcpy2\n";
     fprintf (stderr, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
            t_gpu, (N * N) / t_gpu * 1e-9 );
 
     cudaFree(idata);
     cudaFree(tdata);
+    std::cout << "Free\n";
 }
 
 int 
