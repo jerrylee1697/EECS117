@@ -10,7 +10,7 @@ typedef float dtype;
 __global__ 
 void matTrans(dtype* AT, dtype* A, int N)  {
 	/* Fill your code here */
-    __shared__ float tile[32][32];
+    __shared__ float tile[32][32+1];
     
     int x = blockIdx.x * 32 + threadIdx.x;
     int y = blockIdx.y * 32 + threadIdx.y;
