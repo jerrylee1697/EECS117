@@ -42,48 +42,48 @@ echo ""
 echo "=== Running 5 trials of transpose ... ==="
 for trial in 1 2 3 4 5; do
   echo "*** Trial ${trial} ***"
-  ./transpose 1
+  ./transpose 100
 done
 
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./transpose 128
-done
+# for trial in 1 2 3 4 5; do
+#   echo "*** Trial ${trial} ***"
+#   ./transpose 128
+# done
 
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./transpose 1024
-done
+# for trial in 1 2 3 4 5; do
+#   echo "*** Trial ${trial} ***"
+#   ./transpose 1024
+# done
 
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./transpose 2048
-done
+# for trial in 1 2 3 4 5; do
+#   echo "*** Trial ${trial} ***"
+#   ./transpose 2048
+# done
 
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./transpose 4096
-done
+# for trial in 1 2 3 4 5; do
+#   echo "*** Trial ${trial} ***"
+#   ./transpose 4096
+# done
 
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./transpose 8192
-done
+# for trial in 1 2 3 4 5; do
+#   echo "*** Trial ${trial} ***"
+#   ./transpose 8192
+# done
 
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./transpose 16384
-done
+# for trial in 1 2 3 4 5; do
+#   echo "*** Trial ${trial} ***"
+#   ./transpose 16384
+# done
 
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./transpose 25600
-done
+# for trial in 1 2 3 4 5; do
+#   echo "*** Trial ${trial} ***"
+#   ./transpose 25600
+# done
 
-for trial in 1 2 3 4 5; do
-  echo "*** Trial ${trial} ***"
-  ./transpose 65536
-done
+# for trial in 1 2 3 4 5; do
+#   echo "*** Trial ${trial} ***"
+#   ./transpose 65536
+# done
 
 echo ""
 echo "=== Done! ==="
