@@ -91,23 +91,24 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     }
     dim3 dimGrid((N + pad)/32, (N + pad)/32, 1);
     dim3 dimBlock(32, 8, 1);
-    // fprintf (stderr, "Finish dim3s\n");
+    //  fprintf (stderr, "Finish dim3s\n");
 
     // Create temp in for padding
     dtype *tempIn = (dtype*) malloc ((N + pad) * (N + pad) * sizeof (dtype));
+
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             tempIn[i*(N + pad) + j] = A[i * N + j];
         }
     }
-    
+    // fprintf (stderr, "Finish dim3s\n");
     /* Cuda malloc*/
     dtype *idata, *tdata;
     cudaMalloc(&idata, (N + pad) * (N + pad) * sizeof (dtype));
     cudaMemcpy(idata, tempIn, (N + pad) * (N + pad) * sizeof (dtype), cudaMemcpyHostToDevice);
     
     cudaMalloc(&tdata, (N + pad) * (N + pad) * sizeof (dtype));
-    
+
     /* Setup timers */
     stopwatch_init ();
     timer = stopwatch_create ();
@@ -119,16 +120,15 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     stopwatch_start (timer);
     /* run your kernel here */
     matTrans<<<dimGrid, dimBlock>>>(tdata, idata, N + pad);
-  
+    
     cudaThreadSynchronize ();
     t_gpu = stopwatch_stop (timer);
-    // fprintf (stderr,  "Finish matrix Trans\n");
     
     // Undo padding
     dtype* tempOut = (dtype*) malloc ((N + pad) * (N + pad) * sizeof (dtype));
     cudaMemcpy(tempOut, tdata, (N + pad) * (N + pad) * sizeof (dtype), cudaMemcpyDeviceToHost);
-    for (int i = 0; i < N * N; ++i) {
-        for (int j = 0; j < N * N; ++j) {
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
             AT[i * N + j] = tempOut[i * (N + pad) + j];
         }
     }
