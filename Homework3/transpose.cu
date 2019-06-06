@@ -85,6 +85,9 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     struct stopwatch_t* timer = NULL;
     long double t_gpu;
 
+    int pad = 32 - N % 32;
+    N += pad;
+
     dim3 dimGrid(N/32, N/32, 1);
     dim3 dimBlock(32, 8, 1);
     // fprintf (stderr, "Finish dim3s\n");
