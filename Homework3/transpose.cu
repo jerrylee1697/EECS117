@@ -121,7 +121,7 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     // fprintf (stderr,  "Finish matrix Trans\n");
     
     // Undo padding
-    dtype* temOutp = (dtype*) malloc ((N + pad) * (N + pad) * sizeof (dtype));
+    dtype* temOut = (dtype*) malloc ((N + pad) * (N + pad) * sizeof (dtype));
     cudaMemcpy(tempOut, tdata, (N + pad) * (N + pad) * sizeof (dtype), cudaMemcpyDeviceToHost);
     for (int i = 0; i < N * N; ++i) {
         for (int j = 0; j < N * N; ++j) {
