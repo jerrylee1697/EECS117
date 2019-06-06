@@ -85,18 +85,28 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     struct stopwatch_t* timer = NULL;
     long double t_gpu;
 
-    int pad = 32 - N % 32;
-    N += pad;
-
-    dim3 dimGrid(N/32, N/32, 1);
+    int pad = 0;
+    if (N%32 != 0) {
+        pad = 32 - N % 32;
+    }
+    dim3 dimGrid((N + pad)/32, (N + pad)/32, 1);
     dim3 dimBlock(32, 8, 1);
     // fprintf (stderr, "Finish dim3s\n");
+
+    // Create temp in for padding
+    dtype *tempIn = (dtype*) malloc ((N + pad) * (N + pad) * sizeof (dtype));
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            tempIn[i*(N + pad) + j] = A[i * N + j];
+        }
+    }
+    
     /* Cuda malloc*/
     dtype *idata, *tdata;
-    cudaMalloc(&idata, N * N * sizeof (dtype));
-    cudaMemcpy(idata, A, N * N * sizeof (dtype), cudaMemcpyHostToDevice);
+    cudaMalloc(&idata, (N + pad) * (N + pad) * sizeof (dtype));
+    cudaMemcpy(idata, tempIn, (N + pad) * (N + pad) * sizeof (dtype), cudaMemcpyHostToDevice);
     // fprintf (stderr,  "Finish GPU Mallocs\n");
-    cudaMalloc(&tdata, N * N * sizeof (dtype));
+    cudaMalloc(&tdata, (N + pad) * (N + pad) * sizeof (dtype));
     // fprintf (stderr,  "Finish Memcopy1\n");
     /* Setup timers */
     stopwatch_init ();
@@ -104,12 +114,23 @@ gpuTranspose (dtype* A, dtype* AT, int N)
 
     stopwatch_start (timer);
     /* run your kernel here */
-    matTrans<<<dimGrid, dimBlock>>>(tdata, idata, N);
+    matTrans<<<dimGrid, dimBlock>>>(tdata, idata, N + pad);
   
     cudaThreadSynchronize ();
     t_gpu = stopwatch_stop (timer);
     // fprintf (stderr,  "Finish matrix Trans\n");
-    cudaMemcpy(AT, tdata, N * N * sizeof (dtype), cudaMemcpyDeviceToHost);
+    
+    // Undo padding
+    dtype* temOutp = (dtype*) malloc ((N + pad) * (N + pad) * sizeof (dtype));
+    cudaMemcpy(tempOut, tdata, (N + pad) * (N + pad) * sizeof (dtype), cudaMemcpyDeviceToHost);
+    for (int i = 0; i < N * N; ++i) {
+        for (int j = 0; j < N * N; ++j) {
+            AT[i * N + j] = tempOut[i * (N + pad) + j];
+        }
+    }
+    free (tempOut);
+    free (tempIn);
+
 
     fprintf (stderr, "Size N: %d \n", N);
     fprintf (stderr, "GPU transpose: %Lg secs ==> %Lg billion elements/second\n",
