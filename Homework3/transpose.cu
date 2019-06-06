@@ -105,12 +105,16 @@ gpuTranspose (dtype* A, dtype* AT, int N)
     dtype *idata, *tdata;
     cudaMalloc(&idata, (N + pad) * (N + pad) * sizeof (dtype));
     cudaMemcpy(idata, tempIn, (N + pad) * (N + pad) * sizeof (dtype), cudaMemcpyHostToDevice);
-    // fprintf (stderr,  "Finish GPU Mallocs\n");
+    
     cudaMalloc(&tdata, (N + pad) * (N + pad) * sizeof (dtype));
-    // fprintf (stderr,  "Finish Memcopy1\n");
+    
     /* Setup timers */
     stopwatch_init ();
     timer = stopwatch_create ();
+
+    /* Warmup */
+    matTrans<<<dimGrid, dimBlock>>>(tdata, idata, N + pad);
+    cudaThreadSynchronize ();
 
     stopwatch_start (timer);
     /* run your kernel here */
